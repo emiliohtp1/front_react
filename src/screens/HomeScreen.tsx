@@ -82,7 +82,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const loadProducts = async () => {
     try {
       if (typeof window !== 'undefined') {
-        console.log('Cargando productos desde la API...');
+        //console.log('Cargando productos desde la API...');
         const response = await fetch('https://tienda-ropa-api.onrender.com/api/products');
         const result = await response.json();
         
@@ -169,7 +169,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
     if (selectedCategory && selectedCategory !== 'Todas') {
       filtered = filtered.filter(product => product.category === selectedCategory);
-      console.log('Después de categoría:', filtered.length, 'productos');
+      //console.log('Después de categoría:', filtered.length, 'productos');
     }
 
     const uniqueFiltered = filtered.filter((product, index, self) => 

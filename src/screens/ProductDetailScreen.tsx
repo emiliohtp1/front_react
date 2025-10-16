@@ -25,24 +25,61 @@ interface Product {
 
 interface ProductDetailScreenProps {
   product: Product;
+  userId?: string;
 }
 
 const { width } = Dimensions.get('window');
 
-const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) => {
+const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, userId }) => {
   const [loading, setLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState(product.size || 'M');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
+  const handleSizeSelect = (size: string) => {
+    setSelectedSize(size);
+    // Limpiar mensajes cuando cambie la talla
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+
   const handleAddToCart = async () => {
+    //console.log('handleAddToCart llamado');
+    //console.log('userId:', userId);
+    //console.log('product._id:', product._id);
+    //console.log('selectedSize:', selectedSize);
+    
+    // Limpiar mensajes anteriores
+    setSuccessMessage('');
+    setErrorMessage('');
+    
+    if (!userId) {
+      console.log('No hay userId, mostrando error');
+      setErrorMessage('Usuario no identificado');
+      return;
+    }
+    
+    //console.log('Iniciando proceso de agregar al carrito...');
     setLoading(true);
     try {
-      await addToCart(product._id, selectedSize);
-      Alert.alert('Éxito', 'Producto agregado al carrito');
+      //console.log('Llamando a addToCart...');
+      const result = await addToCart(userId, product._id, selectedSize);
+      //console.log('Resultado de addToCart:', result);
+      
+      if (result.success) {
+        setSuccessMessage('¡Producto agregado al carrito exitosamente!');
+        // Limpiar mensaje después de 3 segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+      } else {
+        setErrorMessage(result.message || 'No se pudo agregar el producto al carrito');
+      }
     } catch (error) {
       console.error('Error agregando al carrito:', error);
-      Alert.alert('Error', 'No se pudo agregar el producto al carrito');
+      setErrorMessage('Error de conexión. Intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +131,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) =>
                 {sizes.map((size) => (
                   <TouchableOpacity
                     key={size}
-                    onPress={() => setSelectedSize(size)}
+                    onPress={() => handleSizeSelect(size)}
                     style={[
                       styles.sizeChip,
                       selectedSize === size && styles.selectedSizeChip
@@ -109,6 +146,19 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) =>
                   </TouchableOpacity>
                 ))}
               </View>
+              
+              {/* Mensajes de estado */}
+              {successMessage ? (
+                <View style={styles.successMessage}>
+                  <Text style={styles.successMessageText}>✓ {successMessage}</Text>
+                </View>
+              ) : null}
+              
+              {errorMessage ? (
+                <View style={styles.errorMessage}>
+                  <Text style={styles.errorMessageText}>⚠ {errorMessage}</Text>
+                </View>
+              ) : null}
               
               <TouchableOpacity
                 onPress={handleAddToCart}
@@ -267,6 +317,34 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  successMessage: {
+    backgroundColor: '#d4edda',
+    borderColor: '#c3e6cb',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  successMessageText: {
+    color: '#155724',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  errorMessage: {
+    backgroundColor: '#f8d7da',
+    borderColor: '#f5c6cb',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorMessageText: {
+    color: '#721c24',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
 

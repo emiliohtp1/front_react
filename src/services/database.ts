@@ -165,13 +165,309 @@ export const getProductById = async (db: Db, productId: string) => {
   }
 };
 
-export const addToCart = async (productId: string, size: string) => {
+// ==================== FUNCIONES DEL CARRITO ====================
+
+export const addToCart = async (userId: string, productId: string, size: string = "M", quantity: number = 1) => {
   try {
-    // Simulamos la operación para ambas plataformas
-    console.log(`Agregando producto ${productId} con talla ${size} al carrito`);
-    return true;
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        //console.log(`Agregando producto ${productId} al carrito del usuario ${userId}`);
+        const response = await fetch(`${API_BASE_URL}/cart/add?user_id=${userId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            size: size,
+            quantity: quantity
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          //console.log('Producto agregado al carrito:', result);
+          return result;
+        } else {
+          console.log('Error agregando al carrito:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, simular operación
+    //console.log(`Agregando producto ${productId} con talla ${size} al carrito del usuario ${userId}`);
+    return { success: true};
   } catch (error) {
     console.error('Error agregando al carrito:', error);
+    throw error;
+  }
+};
+
+export const getCart = async (userId: string) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        //console.log(`Obteniendo carrito del usuario ${userId}`);
+        const response = await fetch(`${API_BASE_URL}/cart/${userId}`);
+        
+        // Si el carrito no existe (404), devolver carrito vacío
+        if (response.status === 404) {
+          //console.log('Carrito no encontrado, devolviendo carrito vacío');
+          return {
+            id: null,
+            user_id: userId,
+            items: [],
+            total_items: 0,
+            total_price: 0,
+            created_at: null,
+            updated_at: null
+          };
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          //console.log('Carrito obtenido:', result);
+          return result.cart;
+        } else {
+          console.log('Error obteniendo carrito:', result.message);
+          // En caso de error, devolver carrito vacío en lugar de lanzar error
+          return {
+            id: null,
+            user_id: userId,
+            items: [],
+            total_items: 0,
+            total_price: 0,
+            created_at: null,
+            updated_at: null
+          };
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API, devolviendo carrito vacío:', apiError);
+        // En caso de error de conexión, devolver carrito vacío
+        return {
+          id: null,
+          user_id: userId,
+          items: [],
+          total_items: 0,
+          total_price: 0,
+          created_at: null,
+          updated_at: null
+        };
+      }
+    }
+    
+    // Para móvil, simular carrito vacío
+    return {
+      id: null,
+      user_id: userId,
+      items: [],
+      total_items: 0,
+      total_price: 0,
+      created_at: null,
+      updated_at: null
+    };
+  } catch (error) {
+    console.error('Error obteniendo carrito:', error);
+    // En caso de cualquier error, devolver carrito vacío
+    return {
+      id: null,
+      user_id: userId,
+      items: [],
+      total_items: 0,
+      total_price: 0,
+      created_at: null,
+      updated_at: null
+    };
+  }
+};
+
+export const updateCartItem = async (userId: string, productId: string, size: string, quantity: number) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        //console.log(`Actualizando item ${productId} en carrito del usuario ${userId}`);
+        const response = await fetch(`${API_BASE_URL}/cart/update?user_id=${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            size: size,
+            quantity: quantity
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          //console.log('Item actualizado:', result);
+          return result;
+        } else {
+          console.log('Error actualizando item:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, simular operación
+    //console.log(`Actualizando item ${productId} en carrito del usuario ${userId}`);
+    return { success: true, message: "Item actualizado (modo offline)" };
+  } catch (error) {
+    console.error('Error actualizando item del carrito:', error);
+    throw error;
+  }
+};
+
+export const removeFromCart = async (userId: string, productId: string, size: string) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        //console.log(`Eliminando producto ${productId} del carrito del usuario ${userId}`);
+        const response = await fetch(`${API_BASE_URL}/cart/remove?user_id=${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            size: size
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          //console.log('Producto eliminado del carrito:', result);
+          return result;
+        } else {
+          console.log('Error eliminando del carrito:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, simular operación
+    console.log(`Eliminando producto ${productId} del carrito del usuario ${userId}`);
+    return { success: true, message: "Producto eliminado del carrito (modo offline)" };
+  } catch (error) {
+    console.error('Error eliminando del carrito:', error);
+    throw error;
+  }
+};
+
+export const clearCart = async (userId: string) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        console.log(`Vaciando carrito del usuario ${userId}`);
+        const response = await fetch(`${API_BASE_URL}/cart/clear/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log('Carrito vaciado:', result);
+          return result;
+        } else {
+          console.log('Error vaciando carrito:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, simular operación
+    console.log(`Vaciando carrito del usuario ${userId}`);
+    return { success: true, message: "Carrito vaciado (modo offline)" };
+  } catch (error) {
+    console.error('Error vaciando carrito:', error);
+    throw error;
+  }
+};
+
+export const processCheckout = async (userId: string, cartItems: any[]) => {
+  try {
+    //console.log('processCheckout iniciado');
+    //console.log('userId:', userId);
+    //console.log('cartItems:', cartItems);
+    //console.log('isWeb:', isWeb);
+    //console.log('API_BASE_URL:', API_BASE_URL);
+    
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        //console.log(`Procesando checkout para usuario ${userId}`, cartItems);
+        //console.log('Enviando request a:', `${API_BASE_URL}/checkout`);
+        
+        const response = await fetch(`${API_BASE_URL}/checkout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            cart_items: cartItems
+          })
+        });
+        
+        //console.log('Response status:', response.status);
+        //console.log('Response ok:', response.ok);
+        
+        const result = await response.json();
+        //console.log('Response result:', result);
+        
+        if (result.success) {
+          //console.log('Checkout procesado exitosamente:', result);
+          return result;
+        } else {
+          console.log('Error procesando checkout:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, simular operación
+    console.log(`Procesando checkout para usuario ${userId}`, cartItems);
+    return { 
+      success: true, 
+      message: "Checkout procesado (modo offline)",
+      stock_updates: cartItems.map(item => ({
+        product_id: item.product_id,
+        product_name: item.product_name,
+        quantity: item.quantity,
+        result: { success: true, action: "updated" }
+      })),
+      cart_cleared: true
+    };
+  } catch (error) {
+    console.error('Error procesando checkout:', error);
     throw error;
   }
 };

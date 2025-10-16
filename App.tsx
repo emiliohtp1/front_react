@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // Sistema de roles implementado
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,9 +8,11 @@ import HomeScreen from './src/screens/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import AddProductScreen from './src/screens/AddProductScreen';
 import EditProductScreen from './src/screens/EditProductScreen';
+import UserProductsScreen from './src/screens/UserProductsScreen';
 import DrawerMenu from './src/components/DrawerMenu';
+import { getCart } from './src/services/database';
 
-type Screen = 'login' | 'home' | 'productDetail' | 'addProduct' | 'editProduct';
+type Screen = 'login' | 'home' | 'productDetail' | 'addProduct' | 'editProduct' | 'userProducts';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -20,8 +22,20 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProductsCount, setFilteredProductsCount] = useState(0);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
 
   const categories = ['Todas', 'Camisetas', 'Pantalones', 'Vestidos', 'Zapatos', 'Accesorios'];
+
+  // Cargar carrito cuando el usuario inicia sesión
+  useEffect(() => {
+    if (currentUser) {
+      loadCart();
+    } else {
+      setCartItems([]);
+      setCartTotal(0);
+    }
+  }, [currentUser]);
 
   const navigateToScreen = (screen: Screen, product?: any) => {
     if (product) {
@@ -50,6 +64,28 @@ const App = () => {
 
   const handleProductEdit = (product: any) => {
     navigateToScreen('editProduct', product);
+  };
+
+  const loadCart = async () => {
+    if (!currentUser) return;
+    
+    try {
+      const cart = await getCart(currentUser._id);
+      setCartItems(cart.items || []);
+      setCartTotal(cart.total_items || 0);
+    } catch (error) {
+      console.error('Error cargando carrito:', error);
+    }
+  };
+
+  const handleCartPress = () => {
+    if (!currentUser) {
+      alert('Debes iniciar sesión para ver tu carrito');
+      return;
+    }
+    
+    //console.log('Navegando a UserProducts para usuario:', currentUser._id);
+    navigateToScreen('userProducts');
   };
 
   const hasPermission = (requiredRole: string) => {
@@ -97,6 +133,14 @@ const App = () => {
                     <Text style={styles.addProductButtonText}>+</Text>
                   </TouchableOpacity>
                 )}
+                <TouchableOpacity onPress={handleCartPress} style={styles.cartButton}>
+                  <Text style={styles.cartButtonText}>🛒</Text>
+                  {cartTotal > 0 && (
+                    <View style={styles.cartBadge}>
+                      <Text style={styles.cartBadgeText}>{cartTotal}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
                 <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
                   <Text style={styles.logoutButtonText}>⎗</Text>
                 </TouchableOpacity>
@@ -135,6 +179,11 @@ const App = () => {
           </View>
         );
       case 'productDetail':
+        //console.log('Renderizando ProductDetailScreen');
+        //console.log('currentUser:', currentUser);
+        //console.log('currentUser?._id:', currentUser?._id);
+        //console.log('selectedProduct:', selectedProduct);
+        
         return (
           <View style={styles.container}>
             <View style={styles.header}>
@@ -142,11 +191,24 @@ const App = () => {
                 <Text style={styles.backButtonText}>← Volver</Text>
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Detalles del Producto</Text>
-              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                    <Text style={styles.logoutButtonText}>⎗</Text>
-              </TouchableOpacity>
+              <View style={styles.headerActions}>
+                <TouchableOpacity onPress={handleCartPress} style={styles.cartButton}>
+                  <Text style={styles.cartButtonText}>🛒</Text>
+                  {cartTotal > 0 && (
+                    <View style={styles.cartBadge}>
+                      <Text style={styles.cartBadgeText}>{cartTotal}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                  <Text style={styles.logoutButtonText}>⎗</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <ProductDetailScreen product={selectedProduct} />
+            <ProductDetailScreen 
+              product={selectedProduct} 
+              userId={currentUser?._id} 
+            />
           </View>
         );
       case 'addProduct':
@@ -157,9 +219,19 @@ const App = () => {
                 <Text style={styles.backButtonText}>← Volver</Text>
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Agregar Producto</Text>
-              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>⎗</Text>
-              </TouchableOpacity>
+              <View style={styles.headerActions}>
+                <TouchableOpacity onPress={handleCartPress} style={styles.cartButton}>
+                  <Text style={styles.cartButtonText}>🛒</Text>
+                  {cartTotal > 0 && (
+                    <View style={styles.cartBadge}>
+                      <Text style={styles.cartBadgeText}>{cartTotal}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                  <Text style={styles.logoutButtonText}>⎗</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             <AddProductScreen 
               onProductAdded={() => navigateToScreen('home')}
@@ -175,9 +247,19 @@ const App = () => {
                 <Text style={styles.backButtonText}>← Volver</Text>
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Editar Producto</Text>
-              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>⎗</Text>
-              </TouchableOpacity>
+              <View style={styles.headerActions}>
+                <TouchableOpacity onPress={handleCartPress} style={styles.cartButton}>
+                  <Text style={styles.cartButtonText}>🛒</Text>
+                  {cartTotal > 0 && (
+                    <View style={styles.cartBadge}>
+                      <Text style={styles.cartBadgeText}>{cartTotal}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                  <Text style={styles.logoutButtonText}>⎗</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             <EditProductScreen 
               product={editingProduct}
@@ -185,6 +267,13 @@ const App = () => {
               onCancel={() => navigateToScreen('home')}
             />
           </View>
+        );
+      case 'userProducts':
+        return (
+          <UserProductsScreen 
+            userId={currentUser?._id || ''}
+            onBack={() => navigateToScreen('home')}
+          />
         );
       default:
         return <LoginScreen onLoginSuccess={() => navigateToScreen('home')} />;
@@ -278,6 +367,37 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
+  },
+  cartButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    minWidth: 36,
+  },
+  cartButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#ff4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   logoutButton: {
     paddingHorizontal: 8,

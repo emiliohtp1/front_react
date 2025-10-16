@@ -46,7 +46,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       const user = await authenticateUser(db, email, password);
       
       if (user) {
-        console.log('Login exitoso:', user);
+        //console.log('Login exitoso:', user);
         onLoginSuccess(user);
       } else {
         console.log('Credenciales incorrectas');
