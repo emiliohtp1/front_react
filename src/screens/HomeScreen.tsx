@@ -155,15 +155,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     setFilteredProducts(uniqueFiltered);
   }, [products, debouncedSearchQuery, selectedCategory]);
 
-  const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity 
-      style={styles.productCard} 
-      onPress={() => onProductSelect(item)}
-    >
-      <Image 
-        source={{ uri: item.image || 'https://via.placeholder.com/300x200' }} 
-        style={styles.productImage as any}
-      />
+  const renderProduct = ({ item }: { item: Product }) => {
+    console.log('Renderizando producto:', item.name, 'URL:', item.image);
+    return (
+      <TouchableOpacity 
+        style={styles.productCard} 
+        onPress={() => onProductSelect(item)}
+      >
+        <Image 
+          source={{ uri: item.image || 'https://picsum.photos/300/200?random=8' }} 
+          style={styles.productImage as any}
+        />
       <View style={styles.productContent}>
         <Text style={styles.productTitle}>{item.name}</Text>
         <Text style={styles.productPrice}>${item.price}</Text>

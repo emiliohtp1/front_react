@@ -76,7 +76,7 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
         price: Number(formData.price),
         description: formData.description.trim(),
         category: formData.category,
-        image: formData.image.trim() || 'https://via.placeholder.com/300x200',
+        image: formData.image.trim() || 'https://picsum.photos/300/200?random=7',
         size: formData.size,
         color: formData.color.trim(),
         stock: formData.stock ? Number(formData.stock) : 0

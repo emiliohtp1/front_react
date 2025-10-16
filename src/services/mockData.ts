@@ -23,7 +23,7 @@ export const mockProducts = [
     price: 25.99,
     description: 'Camiseta de algodón 100% de alta calidad, perfecta para el día a día.',
     category: 'Camisetas',
-    image: 'https://via.placeholder.com/300x200/6200ea/ffffff?text=Camiseta+Blanca',
+    image: 'https://picsum.photos/300/200?random=1',
     size: 'M',
     color: 'Blanco',
     stock: 50
@@ -34,7 +34,7 @@ export const mockProducts = [
     price: 59.99,
     description: 'Jeans de corte clásico en denim azul, cómodos y duraderos.',
     category: 'Pantalones',
-    image: 'https://via.placeholder.com/300x200/1976d2/ffffff?text=Jeans+Azules',
+    image: 'https://picsum.photos/300/200?random=2',
     size: 'L',
     color: 'Azul',
     stock: 30
@@ -45,7 +45,7 @@ export const mockProducts = [
     price: 89.99,
     description: 'Vestido elegante para ocasiones especiales, corte A-line.',
     category: 'Vestidos',
-    image: 'https://via.placeholder.com/300x200/424242/ffffff?text=Vestido+Negro',
+    image: 'https://picsum.photos/300/200?random=3',
     size: 'M',
     color: 'Negro',
     stock: 20
@@ -56,7 +56,7 @@ export const mockProducts = [
     price: 79.99,
     description: 'Zapatos deportivos cómodos para caminar y hacer ejercicio.',
     category: 'Zapatos',
-    image: 'https://via.placeholder.com/300x200/ff9800/ffffff?text=Zapatos+Deportivos',
+    image: 'https://picsum.photos/300/200?random=4',
     size: '42',
     color: 'Negro',
     stock: 25
@@ -67,7 +67,7 @@ export const mockProducts = [
     price: 45.99,
     description: 'Collar elegante de plata 925, perfecto para complementar cualquier outfit.',
     category: 'Accesorios',
-    image: 'https://via.placeholder.com/300x200/9e9e9e/ffffff?text=Collar+Plata',
+    image: 'https://picsum.photos/300/200?random=5',
     size: 'Único',
     color: 'Plata',
     stock: 15
@@ -78,7 +78,7 @@ export const mockProducts = [
     price: 49.99,
     description: 'Sudadera cómoda con capucha, ideal para días frescos.',
     category: 'Camisetas',
-    image: 'https://via.placeholder.com/300x200/4caf50/ffffff?text=Sudadera+Verde',
+    image: 'https://picsum.photos/300/200?random=6',
     size: 'L',
     color: 'Verde',
     stock: 35
