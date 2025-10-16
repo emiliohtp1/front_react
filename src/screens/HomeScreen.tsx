@@ -339,6 +339,7 @@ const styles = StyleSheet.create({
     borderColor: '#0c4aa9',
     fontSize: 16,
     color: '#293540',
+    width: '98%',
   },
   categoriesContainer: {
     paddingVertical: 10,
@@ -387,6 +388,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
     height: 390, // Aumentado de 300 a 400
+    width: 300,
     margin: 0, // El padding se maneja en productWrapper
     position: 'relative', // Para posicionar el botón de eliminar
   },

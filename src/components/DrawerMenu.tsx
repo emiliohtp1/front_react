@@ -28,156 +28,94 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({
   onCategorySelect,
   filteredProductsCount,
 }) => {
-  const translateX = new Animated.Value(isOpen ? 0 : -DRAWER_WIDTH);
-
-  React.useEffect(() => {
-    Animated.timing(translateX, {
-      toValue: isOpen ? 0 : -DRAWER_WIDTH,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
   return (
-    <>
-      {/* Overlay para cerrar el drawer */}
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      />
-      
-      {/* Drawer */}
-      <Animated.View
-        style={[
-          styles.drawer,
-          {
-            transform: [{ translateX }],
-          },
-        ]}
-      >
-        <View style={styles.drawerHeader}>
-          <Text style={styles.drawerTitle}>Filtros</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.fixedSidebar}>
 
-        <View style={styles.drawerContent}>
-          {/* Filtros de categoría */}
-          <View style={styles.categoriesSection}>
-            <Text style={styles.sectionTitle}>Categorías</Text>
-            <View style={styles.categoriesList}>
-              {categories.map((category) => (
-                <TouchableOpacity
-                  key={category}
-                  onPress={() => onCategorySelect(category)}
+      <View style={styles.drawerContent}>
+        {/* Filtros de categoría */}
+        <View style={styles.categoriesSection}>
+          <Text style={styles.sectionTitle}>Categorías</Text>
+          <View style={styles.categoriesList}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => onCategorySelect(category)}
+                style={[
+                  styles.categoryItem,
+                  selectedCategory === category && styles.selectedCategoryItem,
+                ]}
+              >
+                <Text
                   style={[
-                    styles.categoryItem,
-                    selectedCategory === category && styles.selectedCategoryItem,
+                    styles.categoryText,
+                    selectedCategory === category && styles.selectedCategoryText,
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.categoryText,
-                      selectedCategory === category && styles.selectedCategoryText,
-                    ]}
-                  >
-                    {category}
-                  </Text>
-                  {selectedCategory === category && (
-                    <Text style={styles.checkmark}>✓</Text>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* Información de resultados */}
-          <View style={styles.resultsSection}>
-            <Text style={styles.resultsText}>
-              {filteredProductsCount} producto{filteredProductsCount !== 1 ? 's' : ''} encontrado{filteredProductsCount !== 1 ? 's' : ''}
-            </Text>
+                  {category}
+                </Text>
+                {selectedCategory === category && (
+                  <Text style={styles.checkmark}>✓</Text>
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
-      </Animated.View>
-    </>
+
+        {/* Información de resultados */}
+        <View style={styles.resultsSection}>
+          <Text style={styles.resultsText}>
+            {filteredProductsCount} producto{filteredProductsCount !== 1 ? 's' : ''} encontrado{filteredProductsCount !== 1 ? 's' : ''}
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 998,
-    height: '100vh' as any,
-  },
-  drawer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: DRAWER_WIDTH,
-    height: '100vh' as any,
+  fixedSidebar: {
+    flex: 1,
     backgroundColor: '#6583a4',
-    zIndex: 999,
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
-  drawerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 15,
-    paddingTop: 50, // Para el status bar
+  sidebarHeader: {
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     backgroundColor: '#0c4aa9',
     borderBottomWidth: 1,
     borderBottomColor: '#e8f4fd',
   },
-  drawerTitle: {
-    fontSize: 16,
+  sidebarTitle: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
-  },
-  closeButton: {
-    padding: 8,
-  },
-  closeButtonText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
   },
   drawerContent: {
     flex: 1,
-    padding: 12,
+    padding: 10,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#e8f4fd',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   categoriesSection: {
-    marginBottom: 30,
+    marginBottom: 20,
   },
   categoriesList: {
-    gap: 8,
+    gap: 6,
   },
   categoryItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     backgroundColor: '#293540',
     borderRadius: 6,
     borderWidth: 1,
@@ -188,7 +126,7 @@ const styles = StyleSheet.create({
     borderColor: '#0c4aa9',
   },
   categoryText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#e8f4fd',
     fontWeight: '500',
   },
@@ -197,18 +135,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   checkmark: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#fff',
     fontWeight: 'bold',
   },
   resultsSection: {
     marginTop: 'auto',
-    paddingTop: 20,
+    paddingTop: 15,
     borderTopWidth: 1,
     borderTopColor: '#0c4aa9',
   },
   resultsText: {
-    fontSize: 14,
+    fontSize: 10,
     color: '#e8f4fd',
     textAlign: 'center',
     fontStyle: 'italic',

@@ -16,7 +16,6 @@ const App = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProductsCount, setFilteredProductsCount] = useState(0);
@@ -45,17 +44,8 @@ const App = () => {
     }
   };
 
-  const handleOpenDrawer = () => {
-    setIsDrawerOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
-
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
-    handleCloseDrawer();
   };
 
   const handleProductEdit = (product: any) => {
@@ -98,10 +88,8 @@ const App = () => {
       case 'home':
         return (
           <View style={styles.container}>
+            {/* Header fijo */}
             <View style={styles.header}>
-              <TouchableOpacity onPress={handleOpenDrawer} style={styles.menuButton}>
-                <Text style={styles.menuButtonText}>☰</Text>
-              </TouchableOpacity>
               <Text style={styles.headerTitle}>Tienda de Ropa</Text>
               <View style={styles.headerActions}>
                 {hasPermission('editor') && (
@@ -110,21 +98,40 @@ const App = () => {
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                    <Text style={styles.logoutButtonText}>⎗</Text>
+                  <Text style={styles.logoutButtonText}>⎗</Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <HomeScreen 
-              onProductSelect={(product) => navigateToScreen('productDetail', product)} 
-              onProductEdit={handleProductEdit}
-              selectedCategory={selectedCategory}
-              onCategorySelect={setSelectedCategory}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onFilteredProductsCountChange={setFilteredProductsCount}
-              currentUser={currentUser}
-              hasPermission={hasPermission}
-            />
+            
+            {/* Layout principal con sidebar fijo */}
+            <View style={styles.mainLayout}>
+              {/* Sidebar fijo */}
+              <View style={styles.fixedSidebar}>
+                <DrawerMenu
+                  isOpen={true}
+                  onClose={() => {}}
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  filteredProductsCount={filteredProductsCount}
+                />
+              </View>
+              
+              {/* Área de contenido principal */}
+              <View style={styles.contentArea}>
+                <HomeScreen 
+                  onProductSelect={(product) => navigateToScreen('productDetail', product)} 
+                  onProductEdit={handleProductEdit}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={setSelectedCategory}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  onFilteredProductsCountChange={setFilteredProductsCount}
+                  currentUser={currentUser}
+                  hasPermission={hasPermission}
+                />
+              </View>
+            </View>
           </View>
         );
       case 'productDetail':
@@ -184,22 +191,11 @@ const App = () => {
     }
   };
 
-  return (
-    <View style={styles.appContainer}>
-      {renderScreen()}
-      {/* Drawer Menu - Solo se muestra en la pantalla home */}
-      {currentScreen === 'home' && (
-        <DrawerMenu
-          isOpen={isDrawerOpen}
-          onClose={handleCloseDrawer}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategorySelect={handleCategorySelect}
-          filteredProductsCount={filteredProductsCount}
-        />
-      )}
-    </View>
-  );
+      return (
+        <View style={styles.appContainer}>
+          {renderScreen()}
+        </View>
+      );
 };
 
 const styles = StyleSheet.create({
@@ -211,18 +207,46 @@ const styles = StyleSheet.create({
     backgroundColor: '#293540',
     minHeight: '100%' as any, // Asegurar altura mínima de viewport
   },
-      header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#0c4aa9',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        paddingTop: 10, // Para el status bar en web
-      },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#0c4aa9',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    paddingTop: 8, // Para el status bar en web
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    height: 50, // Altura fija del header
+  },
+  mainLayout: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 50, // Altura del header
+    height: 'calc(100vh - 50px)', // Altura total menos header
+  },
+  fixedSidebar: {
+    width: '14%',
+    minWidth: 180,
+    backgroundColor: '#6583a4',
+    position: 'fixed',
+    left: 0,
+    top: 50, // Debajo del header
+    bottom: 0,
+    zIndex: 999,
+  },
+  contentArea: {
+    flex: 1,
+    backgroundColor: '#293540',
+    marginLeft: '15%', // Espacio para el sidebar fijo
+    minWidth: '85%',
+  },
   headerTitle: {
     color: '#fff',
-    fontSize: 40,
+    fontSize: 24,
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
@@ -233,26 +257,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   addProductButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 40,
+    minWidth: 36,
   },
   addProductButtonText: {
     color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  menuButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  menuButtonText: {
-    color: '#fff',
-    fontSize: 40,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   backButton: {
@@ -266,7 +281,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
@@ -274,7 +289,7 @@ const styles = StyleSheet.create({
   },
   logoutButtonText: {
     color: '#fff',
-    fontSize: 40,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });
