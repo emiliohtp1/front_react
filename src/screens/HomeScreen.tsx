@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: 220, // Aumentado de 150 a 220
+    height: 300, // Aumentado de 150 a 220
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
