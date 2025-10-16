@@ -100,7 +100,7 @@ const App = () => {
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                  <Text style={styles.logoutButtonText}>⏻</Text>
+                    <Text style={styles.logoutButtonText}>⎗</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -125,7 +125,7 @@ const App = () => {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Detalles del Producto</Text>
               <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>⏻</Text>
+                    <Text style={styles.logoutButtonText}>⎗</Text>
               </TouchableOpacity>
             </View>
             <ProductDetailScreen product={selectedProduct} />
@@ -140,7 +140,7 @@ const App = () => {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Agregar Producto</Text>
               <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>⏻</Text>
+                    <Text style={styles.logoutButtonText}>⎗</Text>
               </TouchableOpacity>
             </View>
             <AddProductScreen 

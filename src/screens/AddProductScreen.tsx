@@ -27,6 +27,7 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
     stock: ''
   });
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const categories = ['Camisetas', 'Pantalones', 'Vestidos', 'Zapatos', 'Accesorios'];
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -36,31 +37,37 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
       ...prev,
       [field]: value
     }));
+    // Limpiar mensaje de error cuando el usuario empiece a escribir
+    if (errorMessage) {
+      setErrorMessage('');
+    }
   };
 
   const validateForm = () => {
+    setErrorMessage(''); // Limpiar mensaje de error anterior
+    
     if (!formData.name.trim()) {
-      Alert.alert('Error', 'El nombre del producto es requerido');
+      setErrorMessage('El nombre del producto es requerido');
       return false;
     }
     if (!formData.price.trim() || isNaN(Number(formData.price))) {
-      Alert.alert('Error', 'El precio debe ser un número válido');
+      setErrorMessage('El precio debe ser un número válido');
       return false;
     }
     if (!formData.description.trim()) {
-      Alert.alert('Error', 'La descripción es requerida');
+      setErrorMessage('La descripción es requerida');
       return false;
     }
     if (!formData.category) {
-      Alert.alert('Error', 'Selecciona una categoría');
+      setErrorMessage('Selecciona una categoría');
       return false;
     }
     if (!formData.size) {
-      Alert.alert('Error', 'Selecciona una talla');
+      setErrorMessage('Selecciona una talla');
       return false;
     }
     if (!formData.color.trim()) {
-      Alert.alert('Error', 'El color es requerido');
+      setErrorMessage('El color es requerido');
       return false;
     }
     return true;
@@ -228,6 +235,13 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
             />
           </View>
 
+          {/* Mensaje de error */}
+          {errorMessage ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>⚠️ {errorMessage}</Text>
+            </View>
+          ) : null}
+
           {/* Botones */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -344,6 +358,21 @@ const styles = StyleSheet.create({
   selectedSizeChipText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    borderColor: '#f44336',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   buttonContainer: {
     flexDirection: 'row',
