@@ -95,11 +95,8 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
       const result = await addProduct(productData);
       
       if (result.success) {
-        Alert.alert(
-          'Éxito', 
-          'Producto agregado correctamente',
-          [{ text: 'OK', onPress: onProductAdded }]
-        );
+        // Cerrar automáticamente el formulario y regresar a la página principal
+        onProductAdded();
       } else {
         Alert.alert('Error', result.message || 'No se pudo agregar el producto');
       }

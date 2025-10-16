@@ -112,11 +112,8 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
       const result = await updateProduct(product._id, productData);
       
       if (result.success) {
-        Alert.alert(
-          'Éxito', 
-          'Producto actualizado correctamente',
-          [{ text: 'OK', onPress: onProductUpdated }]
-        );
+        // Cerrar automáticamente el formulario y regresar a la página principal
+        onProductUpdated();
       } else {
         Alert.alert('Error', result.message || 'No se pudo actualizar el producto');
       }
