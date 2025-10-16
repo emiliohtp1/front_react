@@ -54,14 +54,13 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
       ...prev,
       [field]: value
     }));
-    // Limpiar mensaje de error cuando el usuario empiece a escribir
     if (errorMessage) {
       setErrorMessage('');
     }
   };
 
   const validateForm = () => {
-    setErrorMessage(''); // Limpiar mensaje de error anterior
+    setErrorMessage('');
     
     if (!formData.name.trim()) {
       setErrorMessage('El nombre del producto es requerido');
@@ -108,11 +107,9 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
 
       console.log('Actualizando producto:', productData);
       
-      // Llamada real a la API
       const result = await updateProduct(product._id, productData);
       
       if (result.success) {
-        // Cerrar automáticamente el formulario y regresar a la página principal
         onProductUpdated();
       } else {
         Alert.alert('Error', result.message || 'No se pudo actualizar el producto');
@@ -131,7 +128,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
         <Text style={styles.title}>Editar Producto</Text>
         
         <View style={styles.form}>
-          {/* Nombre del producto */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Nombre del Producto *</Text>
             <RNTextInput
@@ -142,7 +138,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* Precio */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Precio *</Text>
             <RNTextInput
@@ -154,7 +149,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* Descripción */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Descripción *</Text>
             <RNTextInput
@@ -167,7 +161,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* Categoría */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Categoría *</Text>
             <View style={styles.chipsContainer}>
@@ -193,7 +186,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             </View>
           </View>
 
-          {/* Talla */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Talla *</Text>
             <View style={styles.chipsContainer}>
@@ -219,7 +211,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             </View>
           </View>
 
-          {/* Color */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Color *</Text>
             <RNTextInput
@@ -230,7 +221,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* Stock */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Stock</Text>
             <RNTextInput
@@ -242,7 +232,6 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* URL de imagen */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>URL de Imagen</Text>
             <RNTextInput
@@ -253,14 +242,12 @@ const EditProductScreen: React.FC<EditProductScreenProps> = ({
             />
           </View>
 
-          {/* Mensaje de error */}
           {errorMessage ? (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>⚠️ {errorMessage}</Text>
             </View>
           ) : null}
 
-          {/* Botones */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               onPress={onCancel}

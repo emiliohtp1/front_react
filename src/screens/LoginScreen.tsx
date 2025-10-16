@@ -28,16 +28,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   };
 
   const handleLogin = async () => {
-    // Limpiar mensaje de error anterior
     setErrorMessage('');
 
-    // Validar campos vacíos
     if (!email || !password) {
       setErrorMessage('Por favor completa todos los campos');
       return;
     }
 
-    // Validar formato de email
     if (!validateEmail(email)) {
       setErrorMessage('Por favor ingresa un email válido');
       return;
@@ -82,7 +79,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   value={email}
                   onChangeText={(text) => {
                     setEmail(text);
-                    if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
+                    if (errorMessage) setErrorMessage('');
                   }}
                   onKeyPress={({ nativeEvent }) => {
                     if (nativeEvent.key === 'Enter') {
@@ -102,7 +99,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   value={password}
                   onChangeText={(text) => {
                     setPassword(text);
-                    if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
+                    if (errorMessage) setErrorMessage('');
                   }}
                   onKeyPress={({ nativeEvent }) => {
                     if (nativeEvent.key === 'Enter') {
@@ -115,7 +112,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                 />
             </View>
 
-            {/* Mensaje de error */}
             {errorMessage ? (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>⚠️ {errorMessage}</Text>
@@ -164,8 +160,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
     width: '100%',
-    maxWidth: 700, // Limitar el ancho máximo
-    minWidth: 300, // Ancho mínimo
+    maxWidth: 700,
+    minWidth: 300,
   },
   title: {
     textAlign: 'center',

@@ -51,7 +51,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) =>
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* Lado izquierdo: Imagen */}
+        {/* Sección de imagen - Lado izquierdo */}
         <View style={styles.imageSection}>
           <View style={styles.imageCard}>
             <Image 
@@ -62,7 +62,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) =>
           </View>
         </View>
 
-        {/* Lado derecho: Detalles del producto */}
+        {/* Sección de detalles - Lado derecho */}
         <View style={styles.detailsSection}>
           <ScrollView style={styles.detailsScrollView} showsVerticalScrollIndicator={false}>
             <View style={styles.detailsCard}>
@@ -136,21 +136,25 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     flexDirection: 'row',
+    marginTop: 50,
+    height: 'calc(100vh - 50px)',
   },
   imageSection: {
     flex: 1,
-    padding: 10,
+    padding: 15,
+    paddingRight: 8,
   },
   imageCard: {
-    flex: 1,
     backgroundColor: '#6583a4',
-    borderRadius: 8,
+    borderRadius: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowRadius: 8,
+    elevation: 8,
     overflow: 'hidden',
+    height: '100%',
+    minHeight: 500,
   },
   productImage: {
     width: '100%',
@@ -158,20 +162,21 @@ const styles = StyleSheet.create({
   },
   detailsSection: {
     flex: 1,
-    padding: 10,
+    padding: 15,
+    paddingLeft: 8,
   },
   detailsScrollView: {
     flex: 1,
   },
   detailsCard: {
     backgroundColor: '#6583a4',
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: 12,
+    padding: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowRadius: 8,
+    elevation: 8,
     minHeight: '100%',
   },
   productTitle: {

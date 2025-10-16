@@ -37,14 +37,13 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
       ...prev,
       [field]: value
     }));
-    // Limpiar mensaje de error cuando el usuario empiece a escribir
     if (errorMessage) {
       setErrorMessage('');
     }
   };
 
   const validateForm = () => {
-    setErrorMessage(''); // Limpiar mensaje de error anterior
+    setErrorMessage('');
     
     if (!formData.name.trim()) {
       setErrorMessage('El nombre del producto es requerido');
@@ -91,11 +90,9 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
 
       console.log('Agregando producto:', productData);
       
-      // Llamada real a la API
       const result = await addProduct(productData);
       
       if (result.success) {
-        // Cerrar automáticamente el formulario y regresar a la página principal
         onProductAdded();
       } else {
         Alert.alert('Error', result.message || 'No se pudo agregar el producto');

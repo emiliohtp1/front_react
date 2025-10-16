@@ -81,24 +81,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const loadProducts = async () => {
     try {
-      // Para web, llamamos directamente a la API sin usar connectToDatabase
       if (typeof window !== 'undefined') {
         console.log('Cargando productos desde la API...');
         const response = await fetch('https://tienda-ropa-api.onrender.com/api/products');
         const result = await response.json();
         
           if (result.success) {
-            //console.log('Productos cargados desde API:', result.products.length, 'productos');
-            //console.log('Primeros 3 productos:', result.products.slice(0, 3));
-            //console.log('Todos los productos de la API:', result.products);
-            
-            // Normalizar los productos para usar _id consistentemente
             const normalizedProducts = result.products.map(product => ({
               ...product,
               _id: product.id || product._id || `product-${Math.random()}`
             }));
             
-            //console.log('Productos normalizados:', normalizedProducts.length);
             setProducts(normalizedProducts);
         } else {
           console.log('Error en la API, usando datos mock');
@@ -107,7 +100,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           setProducts(productsData);
         }
       } else {
-        // Para móvil, usar la función original
         const db = await connectToDatabase();
         const productsData = await getProducts(db);
         setProducts(productsData);
@@ -127,7 +119,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   const showDeleteConfirmation = (productId: string, productName: string) => {
-    // Usar window.confirm para web
     if (typeof window !== 'undefined') {
       const confirmed = window.confirm(`¿Estás seguro de que quieres eliminar "${productName}"?`);
       if (confirmed) {
@@ -138,16 +129,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const handleDeleteProduct = async (productId: string, productName: string) => {
     try {
-      //console.log('Eliminando producto:', productId, productName);
       const result = await deleteProduct(productId);
       
       if (result.success) {
-        // Actualizar la lista de productos localmente
         setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
         setFilteredProducts(prevFiltered => prevFiltered.filter(p => p._id !== productId));
         
-        //console.log('Producto eliminado exitosamente');
-        // Mostrar mensaje de éxito
         if (typeof window !== 'undefined') {
           alert(`Producto "${productName}" eliminado correctamente`);
         }
@@ -171,37 +158,28 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       return;
     }
 
-    let filtered = [...products]; // Crear una copia para evitar mutaciones
-    //console.log('Filtrando productos. Total:', products.length, 'Búsqueda:', searchQuery, 'Categoría:', selectedCategory);
+    let filtered = [...products];
 
-    // Aplicar filtro de búsqueda
     if (debouncedSearchQuery && debouncedSearchQuery.trim() !== '') {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
       );
-      //console.log('Después de búsqueda:', filtered.length, 'productos');
     }
 
-    // Aplicar filtro de categoría
     if (selectedCategory && selectedCategory !== 'Todas') {
       filtered = filtered.filter(product => product.category === selectedCategory);
       console.log('Después de categoría:', filtered.length, 'productos');
-    } else if (selectedCategory === 'Todas') {
-      //console.log('Mostrando todas las categorías');
     }
 
-    // Eliminar duplicados por ID
     const uniqueFiltered = filtered.filter((product, index, self) => 
       index === self.findIndex(p => p._id === product._id)
     );
 
-    //console.log('Productos filtrados finales (únicos):', uniqueFiltered.length);
     setFilteredProducts(uniqueFiltered);
   }, [products, debouncedSearchQuery, selectedCategory]);
 
   const renderProduct = ({ item }: { item: Product }) => {
-    //console.log('Renderizando producto:', item.name, 'URL:', item.image);
     return (
       <TouchableOpacity 
         style={styles.productCard} 
@@ -212,26 +190,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           style={styles.productImage as any}
         />
         
-        {/* Botones de acción - Solo para editor y administrador */}
         {hasPermission('editor') && (
           <View style={styles.actionButtons}>
-            {/* Botón de editar */}
             <TouchableOpacity
               style={styles.editButton}
               onPress={(e) => {
-                e.stopPropagation(); // Evitar que se active el onPress del contenedor
+                e.stopPropagation();
                 onProductEdit(item);
               }}
             >
               <Text style={styles.editButtonText}>✏️</Text>
             </TouchableOpacity>
             
-            {/* Botón de eliminar */}
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={(e) => {
-                e.stopPropagation(); // Evitar que se active el onPress del contenedor
-                //console.log('Botón de eliminar presionado para:', item.name);
+                e.stopPropagation();
                 showDeleteConfirmation(item._id, item.name);
               }}
             >
@@ -269,7 +243,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Barra de búsqueda */}
       <TextInput
         placeholder="Buscar productos..."
         onChangeText={onSearchChange}
@@ -277,7 +250,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         style={styles.searchBar}
       />
 
-      {/* Indicador de filtros activos */}
       {(selectedCategory !== 'Todas' || debouncedSearchQuery) && (
         <View style={styles.filterIndicator}>
           <Text style={styles.filterText}>
@@ -376,7 +348,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   productWrapper: {
-    width: '20%', // Para 3 columnas (100% / 3)
+    width: '20%',
     padding: 5,
   },
   productCard: {
@@ -387,56 +359,56 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
-    height: 390, // Aumentado de 300 a 400
+    height: 390,
     width: 300,
-    margin: 0, // El padding se maneja en productWrapper
-    position: 'relative', // Para posicionar el botón de eliminar
+    margin: 0,
+    position: 'relative',
   },
   productImage: {
     width: '100%',
-    height: 230, // Aumentado de 150 a 220
+    height: 230,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
   productContent: {
-    padding: 12, // Padding vertical y horizontal
-    paddingTop: 8, // Menos padding arriba
-    paddingBottom: 12, // Padding normal abajo
-    flex: 1, // Para que ocupe el espacio restante
-    justifyContent: 'flex-end', // Alinear contenido hacia abajo
+    padding: 12,
+    paddingTop: 8,
+    paddingBottom: 12,
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   productTitle: {
-    fontSize: 18, // Aumentado de 16 a 18
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4, // Reducido de 6 a 4
+    marginBottom: 4,
     color: '#e8f4fd',
   },
   productPrice: {
-    fontSize: 20, // Aumentado de 18 a 20
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#0c4aa9',
-    marginBottom: 6, // Reducido de 10 a 6
+    marginBottom: 6,
   },
   productDescription: {
-    fontSize: 14, // Aumentado de 12 a 14
+    fontSize: 14,
     color: '#e8f4fd',
-    marginBottom: 8, // Reducido de 12 a 8
-    lineHeight: 18, // Agregado para mejor legibilidad
+    marginBottom: 8,
+    lineHeight: 18,
   },
   productInfo: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   chip: {
-    marginRight: 4, // Reducido de 6 a 4
-    marginBottom: 4, // Reducido de 6 a 4
-    paddingHorizontal: 10, // Aumentado de 8 a 10
-    paddingVertical: 6, // Aumentado de 4 a 6
+    marginRight: 4,
+    marginBottom: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     backgroundColor: '#0c4aa9',
     borderRadius: 12,
   },
   chipText: {
-    fontSize: 13, // Aumentado de 12 a 13
+    fontSize: 13,
     color: '#fff',
   },
   filterIndicator: {
