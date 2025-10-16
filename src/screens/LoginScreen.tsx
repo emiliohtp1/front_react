@@ -71,38 +71,48 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.content}>
           <View style={styles.card}>
-            <Text style={styles.title}>Tienda de Ropa</Text>
+            <Text style={styles.title}>Tienda Practica</Text>
             <Text style={styles.subtitle}>
               Inicia sesión para continuar
             </Text>
             
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Email</Text>
-              <RNTextInput
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
-                }}
-                style={styles.input}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholder="Ingresa tu email"
-              />
+                <RNTextInput
+                  value={email}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
+                  }}
+                  onKeyPress={({ nativeEvent }) => {
+                    if (nativeEvent.key === 'Enter') {
+                      handleLogin();
+                    }
+                  }}
+                  style={styles.input}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholder="Ingresa tu email"
+                />
             </View>
             
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Contraseña</Text>
-              <RNTextInput
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
-                }}
-                style={styles.input}
-                secureTextEntry
-                placeholder="Ingresa tu contraseña"
-              />
+                <RNTextInput
+                  value={password}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    if (errorMessage) setErrorMessage(''); // Limpiar error al escribir
+                  }}
+                  onKeyPress={({ nativeEvent }) => {
+                    if (nativeEvent.key === 'Enter') {
+                      handleLogin();
+                    }
+                  }}
+                  style={styles.input}
+                  secureTextEntry
+                  placeholder="Ingresa tu contraseña"
+                />
             </View>
 
             {/* Mensaje de error */}
@@ -141,33 +151,37 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   card: {
     backgroundColor: '#6583a4',
     borderRadius: 10,
-    padding: 20,
+    padding: 40,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
+    width: '100%',
+    maxWidth: 700, // Limitar el ancho máximo
+    minWidth: 300, // Ancho mínimo
   },
   title: {
     textAlign: 'center',
-    fontSize: 28,
+    fontSize: 50,
     fontWeight: 'bold',
     color: '#0c4aa9',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 20,
     color: '#e8f4fd',
-    marginBottom: 30,
+    marginBottom: 25,
   },
   inputContainer: {
-    marginBottom: 15,
+    marginBottom: 12,
   },
   label: {
     fontSize: 16,
@@ -189,7 +203,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginTop: 20,
+    marginTop: 15,
     alignItems: 'center',
   },
   buttonDisabled: {

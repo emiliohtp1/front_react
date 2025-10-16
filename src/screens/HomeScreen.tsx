@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   productWrapper: {
-    width: '33.33%', // Para 3 columnas (100% / 3)
+    width: '20%', // Para 3 columnas (100% / 3)
     padding: 5,
   },
   productCard: {
@@ -386,13 +386,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
-    height: 400, // Aumentado de 300 a 400
+    height: 390, // Aumentado de 300 a 400
     margin: 0, // El padding se maneja en productWrapper
     position: 'relative', // Para posicionar el botón de eliminar
   },
   productImage: {
     width: '100%',
-    height: 260, // Aumentado de 150 a 220
+    height: 230, // Aumentado de 150 a 220
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },

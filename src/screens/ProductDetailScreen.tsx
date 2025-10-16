@@ -49,70 +49,81 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product }) =>
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.imageCard}>
-        <Image 
-          source={{ uri: product.image || 'https://via.placeholder.com/400x300' }}
-          style={styles.productImage}
-        />
-      </View>
+    <View style={styles.container}>
+      <View style={styles.contentContainer}>
+        {/* Lado izquierdo: Imagen */}
+        <View style={styles.imageSection}>
+          <View style={styles.imageCard}>
+            <Image 
+              source={{ uri: product.image || 'https://via.placeholder.com/400x300' }}
+              style={styles.productImage}
+              resizeMode="cover"
+            />
+          </View>
+        </View>
 
-      <View style={styles.detailsCard}>
-        <Text style={styles.productTitle}>{product.name}</Text>
-        <Text style={styles.productPrice}>${product.price}</Text>
-        
-        <View style={styles.divider} />
-        
-        <Text style={styles.sectionTitle}>Descripción</Text>
-        <Text style={styles.description}>{product.description}</Text>
-        
-        <Text style={styles.sectionTitle}>Información del Producto</Text>
-        <View style={styles.infoContainer}>
-          <View style={styles.infoChip}>
-            <Text style={styles.infoChipText}>Categoría: {product.category}</Text>
-          </View>
-          <View style={styles.infoChip}>
-            <Text style={styles.infoChipText}>Color: {product.color}</Text>
-          </View>
-          {product.stock && (
-            <View style={styles.infoChip}>
-              <Text style={styles.infoChipText}>Stock: {product.stock}</Text>
+        {/* Lado derecho: Detalles del producto */}
+        <View style={styles.detailsSection}>
+          <ScrollView style={styles.detailsScrollView} showsVerticalScrollIndicator={false}>
+            <View style={styles.detailsCard}>
+              <Text style={styles.productTitle}>{product.name}</Text>
+              <Text style={styles.productPrice}>${product.price}</Text>
+              
+              <View style={styles.divider} />
+              
+              <Text style={styles.sectionTitle}>Descripción</Text>
+              <Text style={styles.description}>{product.description}</Text>
+              
+              <Text style={styles.sectionTitle}>Información del Producto</Text>
+              <View style={styles.infoContainer}>
+                <View style={styles.infoChip}>
+                  <Text style={styles.infoChipText}>Categoría: {product.category}</Text>
+                </View>
+                <View style={styles.infoChip}>
+                  <Text style={styles.infoChipText}>Color: {product.color}</Text>
+                </View>
+                {product.stock && (
+                  <View style={styles.infoChip}>
+                    <Text style={styles.infoChipText}>Stock: {product.stock}</Text>
+                  </View>
+                )}
+              </View>
+              
+              <Text style={styles.sectionTitle}>Talla</Text>
+              <View style={styles.sizesContainer}>
+                {sizes.map((size) => (
+                  <TouchableOpacity
+                    key={size}
+                    onPress={() => setSelectedSize(size)}
+                    style={[
+                      styles.sizeChip,
+                      selectedSize === size && styles.selectedSizeChip
+                    ]}
+                  >
+                    <Text style={[
+                      styles.sizeChipText,
+                      selectedSize === size && styles.selectedSizeChipText
+                    ]}>
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              
+              <TouchableOpacity
+                onPress={handleAddToCart}
+                style={[styles.addToCartButton, loading && styles.buttonDisabled]}
+                disabled={loading}
+              >
+                <Text style={styles.addToCartButtonText}>
+                  {loading ? 'Agregando...' : 'Agregar al Carrito'}
+                </Text>
+              </TouchableOpacity>
             </View>
-          )}
+          </ScrollView>
         </View>
-        
-        <Text style={styles.sectionTitle}>Talla</Text>
-        <View style={styles.sizesContainer}>
-          {sizes.map((size) => (
-            <TouchableOpacity
-              key={size}
-              onPress={() => setSelectedSize(size)}
-              style={[
-                styles.sizeChip,
-                selectedSize === size && styles.selectedSizeChip
-              ]}
-            >
-              <Text style={[
-                styles.sizeChipText,
-                selectedSize === size && styles.selectedSizeChipText
-              ]}>
-                {size}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        
-        <TouchableOpacity
-          onPress={handleAddToCart}
-          style={[styles.addToCartButton, loading && styles.buttonDisabled]}
-          disabled={loading}
-        >
-          <Text style={styles.addToCartButtonText}>
-            {loading ? 'Agregando...' : 'Agregar al Carrito'}
-          </Text>
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -120,10 +131,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#293540',
-    minHeight: '100vh',
+    minHeight: '100%' as any,
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  imageSection: {
+    flex: 1,
+    padding: 10,
   },
   imageCard: {
-    margin: 10,
+    flex: 1,
     backgroundColor: '#6583a4',
     borderRadius: 8,
     shadowColor: '#000',
@@ -131,15 +150,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
+    overflow: 'hidden',
   },
   productImage: {
     width: '100%',
-    height: 600,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    height: '100%',
+  },
+  detailsSection: {
+    flex: 1,
+    padding: 10,
+  },
+  detailsScrollView: {
+    flex: 1,
   },
   detailsCard: {
-    margin: 10,
     backgroundColor: '#6583a4',
     borderRadius: 8,
     padding: 16,
@@ -148,6 +172,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
+    minHeight: '100%',
   },
   productTitle: {
     fontSize: 24,
