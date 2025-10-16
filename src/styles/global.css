@@ -1,0 +1,23 @@
+/* Estilos globales para asegurar el fondo completo */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #293540;
+}
+
+/* Asegurar que el contenedor principal ocupe toda la altura */
+body {
+  background-color: #293540 !important;
+}
+
+#root {
+  background-color: #293540;
+  min-height: 100vh;
+}
+
+/* Estilos para React Native Web */
+div[data-testid="root"] {
+  background-color: #293540;
+  min-height: 100vh;
+}
