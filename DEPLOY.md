@@ -2,46 +2,77 @@
 
 ## Configuración del Proyecto
 
-Este proyecto está configurado para desplegarse como una aplicación web estática en Render.com.
+Este proyecto está configurado para desplegarse en Render.com como una aplicación web estática.
 
 ### Archivos de Configuración
 
-- `render.yaml` - Configuración específica para Render.com
-- `vite.config.js` - Configuración de Vite para el build
-- `package.json` - Scripts de build y dependencias
+- `render.yaml` - Configuración de Render.com
+- `public/_redirects` - Redirecciones para SPA
+- `vite.config.js` - Configuración optimizada para producción
 
-### Scripts Disponibles
+### Comandos de Build
 
 ```bash
-# Desarrollo local
-npm run web
+# Instalar dependencias
+npm install
 
 # Build para producción
 npm run build-web
 
-# Verificar build localmente
-npm run build-web && npx serve dist
+# Servir localmente (opcional)
+npm run web
 ```
 
 ### Variables de Entorno
 
-El proyecto se conecta a la API desplegada en:
+El frontend se conecta automáticamente a la API desplegada en:
 - **API URL**: `https://tienda-ropa-api.onrender.com/api`
 
-### Estructura de Build
+### Estructura de Despliegue
 
-Después del build, los archivos estáticos se generan en:
-- `dist/` - Archivos estáticos listos para producción
+```
+dist/
+├── index.html
+├── assets/
+│   ├── index-[hash].js
+│   └── index-[hash].css
+└── _redirects
+```
 
-## Despliegue en Render.com
+## Pasos para Desplegar
 
-1. **Conectar Repositorio**: Conecta tu repositorio de GitHub
-2. **Tipo de Servicio**: Selecciona "Static Site"
-3. **Build Command**: `npm install && npm run build-web`
-4. **Publish Directory**: `dist`
-5. **Node Version**: 18.x (recomendado)
+1. **Conectar con GitHub**:
+   - Ve a [Render.com](https://render.com)
+   - Conecta tu cuenta de GitHub
+   - Selecciona el repositorio `front_react`
 
-## URLs de Producción
+2. **Configurar el Servicio**:
+   - Tipo: **Static Site**
+   - Build Command: `npm install && npm run build-web`
+   - Publish Directory: `dist`
 
-- **Frontend**: https://tienda-ropa-frontend.onrender.com
-- **API**: https://tienda-ropa-api.onrender.com
+3. **Variables de Entorno** (opcional):
+   - `NODE_ENV=production`
+
+4. **Desplegar**:
+   - Click en "Create Web Service"
+   - Render construirá y desplegará automáticamente
+
+## URLs
+
+- **Frontend**: `https://tienda-ropa-frontend.onrender.com`
+- **API**: `https://tienda-ropa-api.onrender.com`
+
+## Troubleshooting
+
+### Error de Build
+- Verifica que todas las dependencias estén en `package.json`
+- Revisa los logs de build en Render Dashboard
+
+### Error de Routing
+- Asegúrate de que `public/_redirects` esté presente
+- Verifica que el build genere la carpeta `dist/`
+
+### Error de API
+- Verifica que la API esté desplegada y funcionando
+- Revisa la URL de la API en `src/services/database.ts`

@@ -16,6 +16,16 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          reactNative: ['react-native-web'],
+        },
+      },
+    },
   },
   optimizeDeps: {
     include: ['react-native-screens', 'react-native-safe-area-context'],
