@@ -259,3 +259,43 @@ export const createSampleData = async (db: Db) => {
     throw error;
   }
 };
+
+export const addProduct = async (productData: any) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        console.log('Enviando producto a la API:', productData);
+        const response = await fetch(`${API_BASE_URL}/products`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log('Producto agregado exitosamente:', result);
+          return result;
+        } else {
+          console.log('Error agregando producto:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, usar la función original
+    const db = await connectToDatabase();
+    const products = db.collection('products');
+    const result = await products.insertOne(productData);
+    return { success: true, product_id: result.insertedId };
+  } catch (error) {
+    console.error('Error agregando producto:', error);
+    throw error;
+  }
+};

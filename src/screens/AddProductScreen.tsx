@@ -8,6 +8,7 @@ import {
   TextInput as RNTextInput,
   TouchableOpacity,
 } from 'react-native';
+import { addProduct } from '../services/database';
 
 interface AddProductScreenProps {
   onProductAdded: () => void;
@@ -81,20 +82,23 @@ const AddProductScreen: React.FC<AddProductScreenProps> = ({ onProductAdded, onC
         stock: formData.stock ? Number(formData.stock) : 0
       };
 
-      // Aquí iría la llamada a la API para agregar el producto
       console.log('Agregando producto:', productData);
       
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Llamada real a la API
+      const result = await addProduct(productData);
       
-      Alert.alert(
-        'Éxito', 
-        'Producto agregado correctamente',
-        [{ text: 'OK', onPress: onProductAdded }]
-      );
+      if (result.success) {
+        Alert.alert(
+          'Éxito', 
+          'Producto agregado correctamente',
+          [{ text: 'OK', onPress: onProductAdded }]
+        );
+      } else {
+        Alert.alert('Error', result.message || 'No se pudo agregar el producto');
+      }
     } catch (error) {
       console.error('Error agregando producto:', error);
-      Alert.alert('Error', 'No se pudo agregar el producto');
+      Alert.alert('Error', 'No se pudo agregar el producto. Verifica tu conexión.');
     } finally {
       setLoading(false);
     }

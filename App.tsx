@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Sistema de roles implementado
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
