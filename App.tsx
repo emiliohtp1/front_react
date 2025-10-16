@@ -67,13 +67,13 @@ const App = () => {
     const userLevel = roleLevels[currentUser.role as keyof typeof roleLevels] || 1;
     const requiredLevel = roleLevels[requiredRole as keyof typeof roleLevels] || 1;
     
-    console.log('Verificando permisos:', {
-      userRole: currentUser.role,
-      userLevel,
-      requiredRole,
-      requiredLevel,
-      hasPermission: userLevel >= requiredLevel
-    });
+    //console.log('Verificando permisos:', {
+      //userRole: currentUser.role,
+      //userLevel,
+      //requiredRole,
+      //requiredLevel,
+      //hasPermission: userLevel >= requiredLevel
+    //});
     
     return userLevel >= requiredLevel;
   };

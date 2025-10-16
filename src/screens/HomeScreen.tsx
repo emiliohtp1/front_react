@@ -136,7 +136,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const handleDeleteProduct = async (productId: string, productName: string) => {
     try {
-      console.log('Eliminando producto:', productId, productName);
+      //console.log('Eliminando producto:', productId, productName);
       const result = await deleteProduct(productId);
       
       if (result.success) {
@@ -144,7 +144,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
         setFilteredProducts(prevFiltered => prevFiltered.filter(p => p._id !== productId));
         
-        console.log('Producto eliminado exitosamente');
+        //console.log('Producto eliminado exitosamente');
         // Mostrar mensaje de éxito
         if (typeof window !== 'undefined') {
           alert(`Producto "${productName}" eliminado correctamente`);
@@ -170,7 +170,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     }
 
     let filtered = [...products]; // Crear una copia para evitar mutaciones
-    console.log('Filtrando productos. Total:', products.length, 'Búsqueda:', searchQuery, 'Categoría:', selectedCategory);
+    //console.log('Filtrando productos. Total:', products.length, 'Búsqueda:', searchQuery, 'Categoría:', selectedCategory);
 
     // Aplicar filtro de búsqueda
     if (debouncedSearchQuery && debouncedSearchQuery.trim() !== '') {
@@ -194,12 +194,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       index === self.findIndex(p => p._id === product._id)
     );
 
-    console.log('Productos filtrados finales (únicos):', uniqueFiltered.length);
+    //console.log('Productos filtrados finales (únicos):', uniqueFiltered.length);
     setFilteredProducts(uniqueFiltered);
   }, [products, debouncedSearchQuery, selectedCategory]);
 
   const renderProduct = ({ item }: { item: Product }) => {
-    console.log('Renderizando producto:', item.name, 'URL:', item.image);
+    //console.log('Renderizando producto:', item.name, 'URL:', item.image);
     return (
       <TouchableOpacity 
         style={styles.productCard} 
@@ -216,7 +216,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             style={styles.deleteButton}
             onPress={(e) => {
               e.stopPropagation(); // Evitar que se active el onPress del contenedor
-              console.log('Botón de eliminar presionado para:', item.name);
+              //console.log('Botón de eliminar presionado para:', item.name);
               showDeleteConfirmation(item._id, item.name);
             }}
           >
@@ -370,50 +370,53 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 6,
-    height: 300,
+    height: 400, // Aumentado de 300 a 400
     margin: 0, // El padding se maneja en productWrapper
     position: 'relative', // Para posicionar el botón de eliminar
   },
   productImage: {
     width: '100%',
-    height: 150,
+    height: 220, // Aumentado de 150 a 220
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
   productContent: {
-    padding: 12,
+    padding: 16, // Aumentado de 12 a 16
+    flex: 1, // Para que ocupe el espacio restante
+    justifyContent: 'space-between', // Distribuir el contenido
   },
   productTitle: {
-    fontSize: 16,
+    fontSize: 18, // Aumentado de 16 a 18
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 6, // Aumentado de 4 a 6
     color: '#e8f4fd',
   },
   productPrice: {
-    fontSize: 18,
+    fontSize: 20, // Aumentado de 18 a 20
     fontWeight: 'bold',
     color: '#0c4aa9',
-    marginBottom: 8,
+    marginBottom: 10, // Aumentado de 8 a 10
   },
   productDescription: {
-    fontSize: 12,
+    fontSize: 14, // Aumentado de 12 a 14
     color: '#e8f4fd',
-    marginBottom: 8,
+    marginBottom: 12, // Aumentado de 8 a 12
+    lineHeight: 18, // Agregado para mejor legibilidad
   },
   productInfo: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   chip: {
-    marginRight: 4,
-    marginBottom: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    marginRight: 6, // Aumentado de 4 a 6
+    marginBottom: 6, // Aumentado de 4 a 6
+    paddingHorizontal: 10, // Aumentado de 8 a 10
+    paddingVertical: 6, // Aumentado de 4 a 6
     backgroundColor: '#0c4aa9',
     borderRadius: 12,
   },
   chipText: {
-    fontSize: 12,
+    fontSize: 13, // Aumentado de 12 a 13
     color: '#fff',
   },
   filterIndicator: {
