@@ -273,6 +273,7 @@ const App = () => {
           <UserProductsScreen 
             userId={currentUser?._id || ''}
             onBack={() => navigateToScreen('home')}
+            onCartUpdated={loadCart}
           />
         );
       default:

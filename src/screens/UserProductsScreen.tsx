@@ -37,9 +37,10 @@ interface Cart {
 interface UserProductsScreenProps {
   userId: string;
   onBack: () => void;
+  onCartUpdated?: () => void;
 }
 
-const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack }) => {
+const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack, onCartUpdated }) => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -120,6 +121,11 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack 
         
         // Forzar actualización completa del carrito
         await loadCart(true);
+        
+        // Actualizar el carrito en el componente padre (App.tsx)
+        if (onCartUpdated) {
+          onCartUpdated();
+        }
       } else {
         console.error('Error actualizando cantidad:', result.message);
         Alert.alert('Error', result.message || 'No se pudo actualizar la cantidad');
@@ -140,6 +146,11 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack 
         
         // Forzar actualización completa del carrito
         await loadCart(true);
+        
+        // Actualizar el carrito en el componente padre (App.tsx)
+        if (onCartUpdated) {
+          onCartUpdated();
+        }
         
         // Mostrar mensaje de confirmación
         Alert.alert('Éxito', 'Producto eliminado del carrito');
@@ -200,6 +211,11 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack 
           
           // Recargar carrito (debería estar vacío)
           await loadCart(true);
+          
+          // Actualizar el carrito en el componente padre (App.tsx)
+          if (onCartUpdated) {
+            onCartUpdated();
+          }
           
           // Navegar de regreso a HomeScreen después de un breve delay
           setTimeout(() => {
