@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import { connectToDatabase, getProducts, deleteProduct } from '../services/database';
 
