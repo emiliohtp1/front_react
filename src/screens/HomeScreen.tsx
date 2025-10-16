@@ -59,7 +59,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     loadProducts();
   }, []);
 
-  // Debounce para la búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
@@ -74,7 +73,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     }
   }, [products, debouncedSearchQuery, selectedCategory]);
 
-  // Actualizar el contador de productos filtrados
   useEffect(() => {
     onFilteredProductsCountChange(filteredProducts.length);
   }, [filteredProducts, onFilteredProductsCountChange]);
@@ -270,13 +268,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         showsVerticalScrollIndicator={false}
         style={styles.flatListContainer}
       >
-        <View style={styles.productsGrid}>
-          {filteredProducts.map((item) => (
-            <View key={item._id} style={styles.productWrapper}>
-              {renderProduct({ item })}
-            </View>
-          ))}
-        </View>
+        {filteredProducts.length > 0 ? (
+          <View style={styles.productsGrid}>
+            {filteredProducts.map((item) => (
+              <View key={item._id} style={styles.productWrapper}>
+                {renderProduct({ item })}
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.noProductsContainer}>
+            <Text style={styles.noProductsText}>No existen productos</Text>
+            <Text style={styles.noProductsSubtext}>
+              {selectedCategory !== 'Todas' || debouncedSearchQuery 
+                ? 'No se encontraron productos con los filtros aplicados'
+                : 'No hay productos disponibles en la tienda'
+              }
+            </Text>
+          </View>
+        )}
       </ScrollView>
 
     </View>
@@ -469,6 +479,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     lineHeight: 18,
+  },
+  noProductsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  noProductsText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#e8f4fd',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  noProductsSubtext: {
+    fontSize: 16,
+    color: '#6583a4',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
 

@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from 'react-native';
 
-// Declarar window para TypeScript
+
 declare const window: any;
 import { getCart, removeFromCart, updateCartItem, processCheckout } from '../services/database';
 
@@ -50,7 +50,7 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
     try {
       //console.log('Cargando carrito para usuario:', userId, forceRefresh ? '(forzado)' : '');
       
-      // Si es una actualización forzada, mostrar loading
+
       if (forceRefresh) {
         setLoading(true);
       }
@@ -58,7 +58,7 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
       const cartData = await getCart(userId);
       //console.log('Carrito cargado desde BD:', cartData);
       
-      // Si el carrito está vacío o no existe, crear un carrito vacío
+
       if (!cartData || !cartData.items || cartData.items.length === 0) {
         const emptyCart = {
           id: null,
@@ -77,7 +77,7 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
       }
     } catch (error) {
       console.error('Error cargando carrito:', error);
-      // En caso de error, mostrar carrito vacío
+
       const emptyCart = {
         id: null,
         user_id: userId,
@@ -99,7 +99,7 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
     loadCart();
   }, [userId]);
 
-  // Efecto para actualizar la UI cuando cambie el carrito
+
   useEffect(() => {
     if (cart) {
       //console.log('Carrito actualizado en UI:', cart);
@@ -119,10 +119,8 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
       if (result.success) {
         //console.log('Cantidad actualizada exitosamente:', result);
         
-        // Forzar actualización completa del carrito
         await loadCart(true);
         
-        // Actualizar el carrito en el componente padre (App.tsx)
         if (onCartUpdated) {
           onCartUpdated();
         }
@@ -144,15 +142,12 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
       if (result.success) {
         //console.log('Item eliminado exitosamente:', result);
         
-        // Forzar actualización completa del carrito
         await loadCart(true);
         
-        // Actualizar el carrito en el componente padre (App.tsx)
         if (onCartUpdated) {
           onCartUpdated();
         }
         
-        // Mostrar mensaje de confirmación
         Alert.alert('Éxito', 'Producto eliminado del carrito');
       } else {
         console.error('Error eliminando item:', result.message);
@@ -176,7 +171,6 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
       return;
     }
 
-    // Usar confirm de la web en lugar de Alert
     const confirmed = window.confirm(
       `¿Estás seguro de que quieres proceder con la compra de ${cart.total_items} productos por un total de $${cart.total_price.toFixed(2)}?`
     );
@@ -191,7 +185,6 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
         if (result.success) {
           //console.log('Checkout exitoso:', result);
           
-          // Mostrar resumen de la compra
           let message = '¡Compra realizada exitosamente!\n\n';
           
           if (result.stock_updates) {
@@ -206,18 +199,14 @@ const UserProductsScreen: React.FC<UserProductsScreenProps> = ({ userId, onBack,
           
           message += `\nTotal pagado: $${cart.total_price.toFixed(2)}`;
           
-          // Mostrar mensaje de éxito y navegar de regreso
           alert(message);
           
-          // Recargar carrito (debería estar vacío)
           await loadCart(true);
           
-          // Actualizar el carrito en el componente padre (App.tsx)
           if (onCartUpdated) {
             onCartUpdated();
           }
           
-          // Navegar de regreso a HomeScreen después de un breve delay
           setTimeout(() => {
             onBack();
           }, 1000);
@@ -406,7 +395,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   placeholder: {
-    width: 60, // Para balancear el layout
+    width: 60,
   },
   content: {
     flex: 1,

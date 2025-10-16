@@ -40,7 +40,6 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, user
 
   const handleSizeSelect = (size: string) => {
     setSelectedSize(size);
-    // Limpiar mensajes cuando cambie la talla
     setSuccessMessage('');
     setErrorMessage('');
   };
@@ -51,7 +50,6 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, user
     //console.log('product._id:', product._id);
     //console.log('selectedSize:', selectedSize);
     
-    // Limpiar mensajes anteriores
     setSuccessMessage('');
     setErrorMessage('');
     
@@ -70,7 +68,6 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ product, user
       
       if (result.success) {
         setSuccessMessage('¡Producto agregado al carrito exitosamente!');
-        // Limpiar mensaje después de 3 segundos
         setTimeout(() => {
           setSuccessMessage('');
         }, 3000);

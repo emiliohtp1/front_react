@@ -1,20 +1,16 @@
 import { isWeb } from '../utils/platform';
 import { mockUsers, mockProducts } from './mockData';
 
-// Configuración de MongoDB
 const MONGODB_URI = 'mongodb+srv://emiliohtp_db_user:PUyvTLcwWKOQ4wwM@cluster0.cvdcchr.mongodb.net/';
 const DB_NAME = 'login';
 
-// Tipos para compatibilidad
 interface Db {
   collection: (name: string) => any;
 }
 
-// Para web, usamos la API REST desplegada en Render.com
 const API_BASE_URL = 'https://tienda-ropa-api.onrender.com/api';
 
 export const connectToDatabase = async (): Promise<Db> => {
-  // Para web, usamos datos mock por ahora (se puede cambiar a API REST)
   if (isWeb) {
     return {
       collection: (name: string) => ({
@@ -35,8 +31,6 @@ export const connectToDatabase = async (): Promise<Db> => {
     };
   }
 
-  // Para móvil, aquí iría la conexión real a MongoDB
-  // Por ahora usamos datos mock también
   return {
     collection: (name: string) => ({
       find: () => ({
@@ -59,7 +53,6 @@ export const connectToDatabase = async (): Promise<Db> => {
 export const authenticateUser = async (db: Db, email: string, password: string) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         const response = await fetch(`${API_BASE_URL}/auth/login`, {
           method: 'POST',
@@ -88,7 +81,6 @@ export const authenticateUser = async (db: Db, email: string, password: string) 
         }
       } catch (apiError) {
         console.log('Error conectando a la API, usando datos mock:', apiError);
-        // Fallback a datos mock si la API no está disponible
         return mockUsers.find(user => user.email === email && user.password === password) || null;
       }
     }
@@ -105,7 +97,6 @@ export const authenticateUser = async (db: Db, email: string, password: string) 
 export const getProducts = async (db: Db) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         console.log('Obteniendo productos de la API...');
         const response = await fetch(`${API_BASE_URL}/products`);
@@ -136,7 +127,6 @@ export const getProducts = async (db: Db) => {
 export const getProductsByCategory = async (db: Db, category: string) => {
   try {
     if (isWeb) {
-      // Para web, filtramos los datos mock
       return mockProducts.filter(product => product.category === category);
     }
     
@@ -152,7 +142,6 @@ export const getProductsByCategory = async (db: Db, category: string) => {
 export const getProductById = async (db: Db, productId: string) => {
   try {
     if (isWeb) {
-      // Para web, buscamos en datos mock
       return mockProducts.find(product => product._id === productId) || null;
     }
     
@@ -170,7 +159,6 @@ export const getProductById = async (db: Db, productId: string) => {
 export const addToCart = async (userId: string, productId: string, size: string = "M", quantity: number = 1) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         //console.log(`Agregando producto ${productId} al carrito del usuario ${userId}`);
         const response = await fetch(`${API_BASE_URL}/cart/add?user_id=${userId}`, {
@@ -200,7 +188,6 @@ export const addToCart = async (userId: string, productId: string, size: string 
       }
     }
     
-    // Para móvil, simular operación
     //console.log(`Agregando producto ${productId} con talla ${size} al carrito del usuario ${userId}`);
     return { success: true};
   } catch (error) {
@@ -212,12 +199,10 @@ export const addToCart = async (userId: string, productId: string, size: string 
 export const getCart = async (userId: string) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         //console.log(`Obteniendo carrito del usuario ${userId}`);
         const response = await fetch(`${API_BASE_URL}/cart/${userId}`);
         
-        // Si el carrito no existe (404), devolver carrito vacío
         if (response.status === 404) {
           //console.log('Carrito no encontrado, devolviendo carrito vacío');
           return {
@@ -238,7 +223,6 @@ export const getCart = async (userId: string) => {
           return result.cart;
         } else {
           console.log('Error obteniendo carrito:', result.message);
-          // En caso de error, devolver carrito vacío en lugar de lanzar error
           return {
             id: null,
             user_id: userId,
@@ -251,7 +235,6 @@ export const getCart = async (userId: string) => {
         }
       } catch (apiError) {
         console.log('Error conectando a la API, devolviendo carrito vacío:', apiError);
-        // En caso de error de conexión, devolver carrito vacío
         return {
           id: null,
           user_id: userId,
@@ -264,7 +247,6 @@ export const getCart = async (userId: string) => {
       }
     }
     
-    // Para móvil, simular carrito vacío
     return {
       id: null,
       user_id: userId,
@@ -276,7 +258,6 @@ export const getCart = async (userId: string) => {
     };
   } catch (error) {
     console.error('Error obteniendo carrito:', error);
-    // En caso de cualquier error, devolver carrito vacío
     return {
       id: null,
       user_id: userId,
@@ -292,7 +273,6 @@ export const getCart = async (userId: string) => {
 export const updateCartItem = async (userId: string, productId: string, size: string, quantity: number) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         //console.log(`Actualizando item ${productId} en carrito del usuario ${userId}`);
         const response = await fetch(`${API_BASE_URL}/cart/update?user_id=${userId}`, {
@@ -322,7 +302,6 @@ export const updateCartItem = async (userId: string, productId: string, size: st
       }
     }
     
-    // Para móvil, simular operación
     //console.log(`Actualizando item ${productId} en carrito del usuario ${userId}`);
     return { success: true, message: "Item actualizado (modo offline)" };
   } catch (error) {
@@ -334,7 +313,6 @@ export const updateCartItem = async (userId: string, productId: string, size: st
 export const removeFromCart = async (userId: string, productId: string, size: string) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         //console.log(`Eliminando producto ${productId} del carrito del usuario ${userId}`);
         const response = await fetch(`${API_BASE_URL}/cart/remove?user_id=${userId}`, {
@@ -363,7 +341,6 @@ export const removeFromCart = async (userId: string, productId: string, size: st
       }
     }
     
-    // Para móvil, simular operación
     console.log(`Eliminando producto ${productId} del carrito del usuario ${userId}`);
     return { success: true, message: "Producto eliminado del carrito (modo offline)" };
   } catch (error) {
@@ -375,7 +352,6 @@ export const removeFromCart = async (userId: string, productId: string, size: st
 export const clearCart = async (userId: string) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         console.log(`Vaciando carrito del usuario ${userId}`);
         const response = await fetch(`${API_BASE_URL}/cart/clear/${userId}`, {
@@ -400,7 +376,6 @@ export const clearCart = async (userId: string) => {
       }
     }
     
-    // Para móvil, simular operación
     console.log(`Vaciando carrito del usuario ${userId}`);
     return { success: true, message: "Carrito vaciado (modo offline)" };
   } catch (error) {
@@ -418,7 +393,6 @@ export const processCheckout = async (userId: string, cartItems: any[]) => {
     //console.log('API_BASE_URL:', API_BASE_URL);
     
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         //console.log(`Procesando checkout para usuario ${userId}`, cartItems);
         //console.log('Enviando request a:', `${API_BASE_URL}/checkout`);
@@ -453,7 +427,6 @@ export const processCheckout = async (userId: string, cartItems: any[]) => {
       }
     }
     
-    // Para móvil, simular operación
     console.log(`Procesando checkout para usuario ${userId}`, cartItems);
     return { 
       success: true, 
@@ -474,7 +447,6 @@ export const processCheckout = async (userId: string, cartItems: any[]) => {
 
 export const createSampleData = async (db: Db) => {
   try {
-    // Crear usuario de prueba
     const users = db.collection('users');
     await users.insertOne({
       email: 'admin@tienda.com',
@@ -483,7 +455,6 @@ export const createSampleData = async (db: Db) => {
       role: 'admin'
     });
 
-    // Crear productos de muestra
     const products = db.collection('products');
     const sampleProducts = [
       {
@@ -559,7 +530,6 @@ export const createSampleData = async (db: Db) => {
 export const addProduct = async (productData: any) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         console.log('Enviando producto a la API:', productData);
         const response = await fetch(`${API_BASE_URL}/products`, {
@@ -585,7 +555,6 @@ export const addProduct = async (productData: any) => {
       }
     }
     
-    // Para móvil, usar la función original
     const db = await connectToDatabase();
     const products = db.collection('products');
     const result = await products.insertOne(productData);
@@ -599,7 +568,6 @@ export const addProduct = async (productData: any) => {
 export const updateProduct = async (productId: string, productData: any) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         console.log('Actualizando producto:', productId, productData);
         const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
@@ -610,10 +578,8 @@ export const updateProduct = async (productId: string, productData: any) => {
           body: JSON.stringify(productData)
         });
         
-        // Verificar si el endpoint existe
         if (response.status === 405) {
           console.log('Endpoint PUT no disponible, usando fallback temporal');
-          // Fallback temporal: simular actualización exitosa
           return { 
             success: true, 
             message: 'Producto actualizado (modo offline - los cambios se perderán al recargar)' 
@@ -631,7 +597,6 @@ export const updateProduct = async (productId: string, productData: any) => {
         }
       } catch (apiError) {
         console.log('Error conectando a la API, usando fallback temporal:', apiError);
-        // Fallback temporal: simular actualización exitosa
         return { 
           success: true, 
           message: 'Producto actualizado (modo offline - los cambios se perderán al recargar)' 
@@ -639,7 +604,6 @@ export const updateProduct = async (productId: string, productData: any) => {
       }
     }
     
-    // Para móvil, usar la función original
     const db = await connectToDatabase();
     const products = db.collection('products');
     const result = await products.updateOne({ _id: productId }, { $set: productData });
@@ -653,7 +617,6 @@ export const updateProduct = async (productId: string, productData: any) => {
 export const deleteProduct = async (productId: string) => {
   try {
     if (isWeb) {
-      // Para web, usamos la API REST
       try {
         console.log('Eliminando producto:', productId);
         const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
@@ -678,7 +641,6 @@ export const deleteProduct = async (productId: string) => {
       }
     }
     
-    // Para móvil, usar la función original
     const db = await connectToDatabase();
     const products = db.collection('products');
     const result = await products.deleteOne({ _id: productId });
