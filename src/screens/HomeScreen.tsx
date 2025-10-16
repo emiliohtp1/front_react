@@ -381,26 +381,28 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   productContent: {
-    padding: 7, // Aumentado de 12 a 16
+    padding: 12, // Padding vertical y horizontal
+    paddingTop: 8, // Menos padding arriba
+    paddingBottom: 12, // Padding normal abajo
     flex: 1, // Para que ocupe el espacio restante
-    justifyContent: 'space-between', // Distribuir el contenido
+    justifyContent: 'flex-end', // Alinear contenido hacia abajo
   },
   productTitle: {
     fontSize: 18, // Aumentado de 16 a 18
     fontWeight: 'bold',
-    marginBottom: 6, // Aumentado de 4 a 6
+    marginBottom: 4, // Reducido de 6 a 4
     color: '#e8f4fd',
   },
   productPrice: {
     fontSize: 20, // Aumentado de 18 a 20
     fontWeight: 'bold',
     color: '#0c4aa9',
-    marginBottom: 10, // Aumentado de 8 a 10
+    marginBottom: 6, // Reducido de 10 a 6
   },
   productDescription: {
     fontSize: 14, // Aumentado de 12 a 14
     color: '#e8f4fd',
-    marginBottom: 12, // Aumentado de 8 a 12
+    marginBottom: 8, // Reducido de 12 a 8
     lineHeight: 18, // Agregado para mejor legibilidad
   },
   productInfo: {
@@ -408,8 +410,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   chip: {
-    marginRight: 6, // Aumentado de 4 a 6
-    marginBottom: 6, // Aumentado de 4 a 6
+    marginRight: 4, // Reducido de 6 a 4
+    marginBottom: 4, // Reducido de 6 a 4
     paddingHorizontal: 10, // Aumentado de 8 a 10
     paddingVertical: 6, // Aumentado de 4 a 6
     backgroundColor: '#0c4aa9',
