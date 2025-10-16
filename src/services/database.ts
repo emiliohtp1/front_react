@@ -300,6 +300,46 @@ export const addProduct = async (productData: any) => {
   }
 };
 
+export const updateProduct = async (productId: string, productData: any) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        console.log('Actualizando producto:', productId, productData);
+        const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log('Producto actualizado exitosamente:', result);
+          return result;
+        } else {
+          console.log('Error actualizando producto:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, usar la función original
+    const db = await connectToDatabase();
+    const products = db.collection('products');
+    const result = await products.updateOne({ _id: productId }, { $set: productData });
+    return { success: true, modified_count: result.modifiedCount };
+  } catch (error) {
+    console.error('Error actualizando producto:', error);
+    throw error;
+  }
+};
+
 export const deleteProduct = async (productId: string) => {
   try {
     if (isWeb) {

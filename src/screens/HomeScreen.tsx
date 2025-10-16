@@ -11,7 +11,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { connectToDatabase, getProducts, deleteProduct } from '../services/database';
+import { connectToDatabase, getProducts, deleteProduct, updateProduct } from '../services/database';
 
 interface Product {
   _id: string;
@@ -26,6 +26,7 @@ interface Product {
 
 interface HomeScreenProps {
   onProductSelect: (product: Product) => void;
+  onProductEdit: (product: Product) => void;
   selectedCategory: string;
   onCategorySelect: (category: string) => void;
   searchQuery: string;
@@ -37,6 +38,7 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ 
   onProductSelect, 
+  onProductEdit,
   selectedCategory, 
   onCategorySelect, 
   searchQuery, 
@@ -210,18 +212,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           style={styles.productImage as any}
         />
         
-        {/* Botón de eliminar - Solo para editor y administrador */}
+        {/* Botones de acción - Solo para editor y administrador */}
         {hasPermission('editor') && (
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={(e) => {
-              e.stopPropagation(); // Evitar que se active el onPress del contenedor
-              //console.log('Botón de eliminar presionado para:', item.name);
-              showDeleteConfirmation(item._id, item.name);
-            }}
-          >
-            <Text style={styles.deleteButtonText}>×</Text>
-          </TouchableOpacity>
+          <View style={styles.actionButtons}>
+            {/* Botón de editar */}
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={(e) => {
+                e.stopPropagation(); // Evitar que se active el onPress del contenedor
+                onProductEdit(item);
+              }}
+            >
+              <Text style={styles.editButtonText}>✏️</Text>
+            </TouchableOpacity>
+            
+            {/* Botón de eliminar */}
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={(e) => {
+                e.stopPropagation(); // Evitar que se active el onPress del contenedor
+                //console.log('Botón de eliminar presionado para:', item.name);
+                showDeleteConfirmation(item._id, item.name);
+              }}
+            >
+              <Text style={styles.deleteButtonText}>×</Text>
+            </TouchableOpacity>
+          </View>
         )}
         
         <View style={styles.productContent}>
@@ -435,17 +451,39 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
-  deleteButton: {
+  actionButtons: {
     position: 'absolute',
     top: 8,
     right: 8,
+    flexDirection: 'row',
+    gap: 8,
+    zIndex: 10,
+  },
+  editButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#ffc107',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  editButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    lineHeight: 16,
+  },
+  deleteButton: {
     width: 30,
     height: 30,
     borderRadius: 15,
     backgroundColor: '#f44336',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,

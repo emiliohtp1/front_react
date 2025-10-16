@@ -7,13 +7,15 @@ import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import AddProductScreen from './src/screens/AddProductScreen';
+import EditProductScreen from './src/screens/EditProductScreen';
 import DrawerMenu from './src/components/DrawerMenu';
 
-type Screen = 'login' | 'home' | 'productDetail' | 'addProduct';
+type Screen = 'login' | 'home' | 'productDetail' | 'addProduct' | 'editProduct';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +26,11 @@ const App = () => {
 
   const navigateToScreen = (screen: Screen, product?: any) => {
     if (product) {
-      setSelectedProduct(product);
+      if (screen === 'editProduct') {
+        setEditingProduct(product);
+      } else {
+        setSelectedProduct(product);
+      }
     }
     setCurrentScreen(screen);
   };
@@ -50,6 +56,10 @@ const App = () => {
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
     handleCloseDrawer();
+  };
+
+  const handleProductEdit = (product: any) => {
+    navigateToScreen('editProduct', product);
   };
 
   const hasPermission = (requiredRole: string) => {
@@ -106,6 +116,7 @@ const App = () => {
             </View>
             <HomeScreen 
               onProductSelect={(product) => navigateToScreen('productDetail', product)} 
+              onProductEdit={handleProductEdit}
               selectedCategory={selectedCategory}
               onCategorySelect={setSelectedCategory}
               searchQuery={searchQuery}
@@ -140,11 +151,30 @@ const App = () => {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Agregar Producto</Text>
               <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                    <Text style={styles.logoutButtonText}>⎗</Text>
+                <Text style={styles.logoutButtonText}>⎗</Text>
               </TouchableOpacity>
             </View>
             <AddProductScreen 
               onProductAdded={() => navigateToScreen('home')}
+              onCancel={() => navigateToScreen('home')}
+            />
+          </View>
+        );
+      case 'editProduct':
+        return (
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigateToScreen('home')} style={styles.backButton}>
+                <Text style={styles.backButtonText}>← Volver</Text>
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Editar Producto</Text>
+              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                <Text style={styles.logoutButtonText}>⎗</Text>
+              </TouchableOpacity>
+            </View>
+            <EditProductScreen 
+              product={editingProduct}
+              onProductUpdated={() => navigateToScreen('home')}
               onCancel={() => navigateToScreen('home')}
             />
           </View>
