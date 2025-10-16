@@ -100,6 +100,8 @@ const App = () => {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               onFilteredProductsCountChange={setFilteredProductsCount}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
             />
           </View>
         );

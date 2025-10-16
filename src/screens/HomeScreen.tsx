@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { connectToDatabase, getProducts } from '../services/database';
+import { connectToDatabase, getProducts, deleteProduct } from '../services/database';
 
 interface Product {
   _id: string;
@@ -31,6 +31,8 @@ interface HomeScreenProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onFilteredProductsCountChange: (count: number) => void;
+  currentUser: any;
+  hasPermission: (role: string) => boolean;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ 
@@ -39,7 +41,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   onCategorySelect, 
   searchQuery, 
   onSearchChange, 
-  onFilteredProductsCountChange 
+  onFilteredProductsCountChange,
+  currentUser,
+  hasPermission
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -120,6 +124,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     setRefreshing(false);
   };
 
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    try {
+      const result = await deleteProduct(productId);
+      
+      if (result.success) {
+        // Actualizar la lista de productos localmente
+        setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
+        setFilteredProducts(prevFiltered => prevFiltered.filter(p => p._id !== productId));
+        
+        Alert.alert('Éxito', `Producto "${productName}" eliminado correctamente`);
+      } else {
+        Alert.alert('Error', result.message || 'No se pudo eliminar el producto');
+      }
+    } catch (error) {
+      console.error('Error eliminando producto:', error);
+      Alert.alert('Error', 'No se pudo eliminar el producto. Verifica tu conexión.');
+    }
+  };
+
   const filterProducts = useCallback(() => {
     if (products.length === 0) {
       setFilteredProducts([]);
@@ -166,22 +189,47 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           source={{ uri: item.image || 'https://picsum.photos/300/200?random=8' }} 
           style={styles.productImage as any}
         />
-      <View style={styles.productContent}>
-        <Text style={styles.productTitle}>{item.name}</Text>
-        <Text style={styles.productPrice}>${item.price}</Text>
-        <Text style={styles.productDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-        <View style={styles.productInfo}>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>{item.category}</Text>
-          </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>{item.size}</Text>
+        
+        {/* Botón de eliminar - Solo para editor y administrador */}
+        {hasPermission('editor') && (
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={(e) => {
+              e.stopPropagation(); // Evitar que se active el onPress del contenedor
+              Alert.alert(
+                'Eliminar Producto',
+                `¿Estás seguro de que quieres eliminar "${item.name}"?`,
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  { 
+                    text: 'Eliminar', 
+                    style: 'destructive',
+                    onPress: () => handleDeleteProduct(item._id, item.name)
+                  }
+                ]
+              );
+            }}
+          >
+            <Text style={styles.deleteButtonText}>×</Text>
+          </TouchableOpacity>
+        )}
+        
+        <View style={styles.productContent}>
+          <Text style={styles.productTitle}>{item.name}</Text>
+          <Text style={styles.productPrice}>${item.price}</Text>
+          <Text style={styles.productDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
+          <View style={styles.productInfo}>
+            <View style={styles.chip}>
+              <Text style={styles.chipText}>{item.category}</Text>
+            </View>
+            <View style={styles.chip}>
+              <Text style={styles.chipText}>{item.size}</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
     );
   };
 
@@ -314,6 +362,7 @@ const styles = StyleSheet.create({
     elevation: 6,
     height: 300,
     margin: 0, // El padding se maneja en productWrapper
+    position: 'relative', // Para posicionar el botón de eliminar
   },
   productImage: {
     width: '100%',
@@ -370,6 +419,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     fontWeight: '500',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#f44336',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 18,
   },
 });
 

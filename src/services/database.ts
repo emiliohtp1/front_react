@@ -299,3 +299,42 @@ export const addProduct = async (productData: any) => {
     throw error;
   }
 };
+
+export const deleteProduct = async (productId: string) => {
+  try {
+    if (isWeb) {
+      // Para web, usamos la API REST
+      try {
+        console.log('Eliminando producto:', productId);
+        const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log('Producto eliminado exitosamente:', result);
+          return result;
+        } else {
+          console.log('Error eliminando producto:', result.message);
+          throw new Error(result.message);
+        }
+      } catch (apiError) {
+        console.log('Error conectando a la API:', apiError);
+        throw apiError;
+      }
+    }
+    
+    // Para móvil, usar la función original
+    const db = await connectToDatabase();
+    const products = db.collection('products');
+    const result = await products.deleteOne({ _id: productId });
+    return { success: true, deleted_count: result.deletedCount };
+  } catch (error) {
+    console.error('Error eliminando producto:', error);
+    throw error;
+  }
+};
