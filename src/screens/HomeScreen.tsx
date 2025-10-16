@@ -182,7 +182,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </View>
       </View>
     </TouchableOpacity>
-  );
+    );
+  };
 
   if (loading) {
     return (
