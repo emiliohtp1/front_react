@@ -88,9 +88,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         const result = await response.json();
         
           if (result.success) {
-            console.log('Productos cargados desde API:', result.products.length, 'productos');
-            console.log('Primeros 3 productos:', result.products.slice(0, 3));
-            console.log('Todos los productos de la API:', result.products);
+            //console.log('Productos cargados desde API:', result.products.length, 'productos');
+            //console.log('Primeros 3 productos:', result.products.slice(0, 3));
+            //console.log('Todos los productos de la API:', result.products);
             
             // Normalizar los productos para usar _id consistentemente
             const normalizedProducts = result.products.map(product => ({
@@ -98,7 +98,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               _id: product.id || product._id || `product-${Math.random()}`
             }));
             
-            console.log('Productos normalizados:', normalizedProducts.length);
+            //console.log('Productos normalizados:', normalizedProducts.length);
             setProducts(normalizedProducts);
         } else {
           console.log('Error en la API, usando datos mock');
@@ -180,7 +180,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         product.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
       );
-      console.log('Después de búsqueda:', filtered.length, 'productos');
+      //console.log('Después de búsqueda:', filtered.length, 'productos');
     }
 
     // Aplicar filtro de categoría
@@ -188,7 +188,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       filtered = filtered.filter(product => product.category === selectedCategory);
       console.log('Después de categoría:', filtered.length, 'productos');
     } else if (selectedCategory === 'Todas') {
-      console.log('Mostrando todas las categorías');
+      //console.log('Mostrando todas las categorías');
     }
 
     // Eliminar duplicados por ID

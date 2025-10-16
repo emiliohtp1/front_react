@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: 300,
+    height: 600,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
