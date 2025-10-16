@@ -79,6 +79,7 @@ export const authenticateUser = async (db: Db, email: string, password: string) 
             _id: result.user.id,
             email: result.user.username,
             name: result.user.username,
+            role: result.user.role || 'usuario',
             created_at: result.user.created_at
           };
         } else {

@@ -5,9 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
+import AddProductScreen from './src/screens/AddProductScreen';
 import DrawerMenu from './src/components/DrawerMenu';
 
-type Screen = 'login' | 'home' | 'productDetail';
+type Screen = 'login' | 'home' | 'productDetail' | 'addProduct';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -16,6 +17,7 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProductsCount, setFilteredProductsCount] = useState(0);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const categories = ['Todas', 'Camisetas', 'Pantalones', 'Vestidos', 'Zapatos', 'Accesorios'];
 
@@ -29,6 +31,7 @@ const App = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
+      setCurrentUser(null);
       setCurrentScreen('login');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -48,10 +51,28 @@ const App = () => {
     handleCloseDrawer();
   };
 
+  const hasPermission = (requiredRole: string) => {
+    if (!currentUser) return false;
+    
+    const roleLevels = {
+      'usuario': 1,
+      'editor': 2,
+      'administrador': 3
+    };
+    
+    const userLevel = roleLevels[currentUser.role as keyof typeof roleLevels] || 1;
+    const requiredLevel = roleLevels[requiredRole as keyof typeof roleLevels] || 1;
+    
+    return userLevel >= requiredLevel;
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'login':
-        return <LoginScreen onLoginSuccess={() => navigateToScreen('home')} />;
+        return <LoginScreen onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          navigateToScreen('home');
+        }} />;
       case 'home':
         return (
           <View style={styles.container}>
@@ -60,9 +81,16 @@ const App = () => {
                 <Text style={styles.menuButtonText}>☰</Text>
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Tienda de Ropa</Text>
-              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>⏻</Text>
-              </TouchableOpacity>
+              <View style={styles.headerActions}>
+                {hasPermission('editor') && (
+                  <TouchableOpacity onPress={() => navigateToScreen('addProduct')} style={styles.addProductButton}>
+                    <Text style={styles.addProductButtonText}>+</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                  <Text style={styles.logoutButtonText}>⏻</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             <HomeScreen 
               onProductSelect={(product) => navigateToScreen('productDetail', product)} 
@@ -87,6 +115,24 @@ const App = () => {
               </TouchableOpacity>
             </View>
             <ProductDetailScreen product={selectedProduct} />
+          </View>
+        );
+      case 'addProduct':
+        return (
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigateToScreen('home')} style={styles.backButton}>
+                <Text style={styles.backButtonText}>← Volver</Text>
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Agregar Producto</Text>
+              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                <Text style={styles.logoutButtonText}>⏻</Text>
+              </TouchableOpacity>
+            </View>
+            <AddProductScreen 
+              onProductAdded={() => navigateToScreen('home')}
+              onCancel={() => navigateToScreen('home')}
+            />
           </View>
         );
       default:
@@ -136,6 +182,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  addProductButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 40,
+  },
+  addProductButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   menuButton: {
     paddingHorizontal: 12,

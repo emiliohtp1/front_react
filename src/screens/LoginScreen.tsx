@@ -13,7 +13,7 @@ import {
 import { connectToDatabase, authenticateUser } from '../services/database';
 
 interface LoginScreenProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user: any) => void;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
@@ -50,7 +50,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       
       if (user) {
         console.log('Login exitoso:', user);
-        onLoginSuccess();
+        onLoginSuccess(user);
       } else {
         console.log('Credenciales incorrectas');
         setErrorMessage('Email o contraseña incorrectos. Verifica tus credenciales.');
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#293540',
-    minHeight: '100vh',
+    minHeight: '100%',
   },
   scrollContainer: {
     flexGrow: 1,
