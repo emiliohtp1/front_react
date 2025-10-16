@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   productContent: {
-    padding: 16, // Aumentado de 12 a 16
+    padding: 7, // Aumentado de 12 a 16
     flex: 1, // Para que ocupe el espacio restante
     justifyContent: 'space-between', // Distribuir el contenido
   },
