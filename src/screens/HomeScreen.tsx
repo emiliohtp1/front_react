@@ -5,7 +5,6 @@ import {
   FlatList,
   ScrollView,
   RefreshControl,
-  Alert,
   Text,
   TextInput,
   TouchableOpacity,
@@ -124,8 +123,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     setRefreshing(false);
   };
 
+  const showDeleteConfirmation = (productId: string, productName: string) => {
+    // Usar window.confirm para web
+    if (typeof window !== 'undefined') {
+      const confirmed = window.confirm(`¿Estás seguro de que quieres eliminar "${productName}"?`);
+      if (confirmed) {
+        handleDeleteProduct(productId, productName);
+      }
+    }
+  };
+
   const handleDeleteProduct = async (productId: string, productName: string) => {
     try {
+      console.log('Eliminando producto:', productId, productName);
       const result = await deleteProduct(productId);
       
       if (result.success) {
@@ -133,13 +143,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
         setFilteredProducts(prevFiltered => prevFiltered.filter(p => p._id !== productId));
         
-        Alert.alert('Éxito', `Producto "${productName}" eliminado correctamente`);
+        console.log('Producto eliminado exitosamente');
+        // Mostrar mensaje de éxito
+        if (typeof window !== 'undefined') {
+          alert(`Producto "${productName}" eliminado correctamente`);
+        }
       } else {
-        Alert.alert('Error', result.message || 'No se pudo eliminar el producto');
+        console.error('Error eliminando producto:', result.message);
+        if (typeof window !== 'undefined') {
+          alert(`Error: ${result.message || 'No se pudo eliminar el producto'}`);
+        }
       }
     } catch (error) {
       console.error('Error eliminando producto:', error);
-      Alert.alert('Error', 'No se pudo eliminar el producto. Verifica tu conexión.');
+      if (typeof window !== 'undefined') {
+        alert('Error: No se pudo eliminar el producto. Verifica tu conexión.');
+      }
     }
   };
 
@@ -196,18 +215,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             style={styles.deleteButton}
             onPress={(e) => {
               e.stopPropagation(); // Evitar que se active el onPress del contenedor
-              Alert.alert(
-                'Eliminar Producto',
-                `¿Estás seguro de que quieres eliminar "${item.name}"?`,
-                [
-                  { text: 'Cancelar', style: 'cancel' },
-                  { 
-                    text: 'Eliminar', 
-                    style: 'destructive',
-                    onPress: () => handleDeleteProduct(item._id, item.name)
-                  }
-                ]
-              );
+              console.log('Botón de eliminar presionado para:', item.name);
+              showDeleteConfirmation(item._id, item.name);
             }}
           >
             <Text style={styles.deleteButtonText}>×</Text>
